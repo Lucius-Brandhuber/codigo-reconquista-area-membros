@@ -272,20 +272,20 @@
       </div>
 
       <!-- LOGIN -->
-      <form class="auth-pane on" id="pane-login" onsubmit="return doLogin(event)">
+      <form class="auth-pane on" id="pane-login" onsubmit="doLogin(event);return false;">
         <div class="field"><input id="li-mail" type="email" placeholder="E-mail da compra" autocomplete="email"></div>
         <div class="field"><input id="li-pass" type="password" placeholder="Sua senha" autocomplete="current-password"></div>
         <div class="auth-err" id="li-err"></div>
-        <button class="btn-grad" type="submit" id="li-btn">Entrar →</button>
+        <button class="btn-grad" type="button" id="li-btn" onclick="doLogin()">Entrar →</button>
       </form>
 
       <!-- REGISTRO -->
-      <form class="auth-pane" id="pane-reg" onsubmit="return doRegister(event)">
+      <form class="auth-pane" id="pane-reg" onsubmit="doRegister(event);return false;">
         <div class="field"><input id="rg-name" type="text" placeholder="Como posso te chamar?" autocomplete="given-name"></div>
         <div class="field"><input id="rg-mail" type="email" placeholder="E-mail usado na compra" autocomplete="email"></div>
         <div class="field"><input id="rg-pass" type="password" placeholder="Crie uma senha (mín. 6 caracteres)" autocomplete="new-password"></div>
         <div class="auth-err" id="rg-err"></div>
-        <button class="btn-grad" type="submit" id="rg-btn">Criar minha conta →</button>
+        <button class="btn-grad" type="button" id="rg-btn" onclick="doRegister()">Criar minha conta →</button>
       </form>
 
       <p class="auth-hint" id="auth-mode-hint"></p>
@@ -494,7 +494,7 @@ function $all(s){return document.querySelectorAll(s);}
 
 /* ============ AUTH (Rota A: Google Apps Script + Sheets) ============ */
 /* >>> Depois de publicar o Apps Script (pasta /gas), cole a URL /exec aqui: */
-var GAS_AUTH = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+var GAS_AUTH = 'https://script.google.com/macros/s/AKfycbzUV9YStTYiUrIdKGnH3AXd9XBSSdkfqDBwhyIl3E0HrD1HGVJ_eDa0NfRNO3NtsELF/exec';
 var SERVER = GAS_AUTH && !/COLE_AQUI/.test(GAS_AUTH);
 var session = null; // {email, nome, token}
 
