@@ -164,6 +164,35 @@
   .mod .pct{font-size:12px;font-weight:700;color:var(--pink);}
   .mod .arr{position:absolute;top:15px;right:14px;color:#d6b9cb;font-size:16px;}
 
+  /* ============ MÓDULO (detalhe) ============ */
+  .mod-head{display:flex;gap:13px;margin:6px 0 16px;}
+  .mod-head .mh-em{font-size:26px;line-height:1;flex:0 0 auto;}
+  .mh-lbl{font-size:11px;font-weight:800;letter-spacing:.6px;color:var(--pink);text-transform:uppercase;}
+  .mod-head h1{font-size:22px;font-weight:800;letter-spacing:-.3px;margin-top:2px;}
+  .mh-d{font-size:13px;color:var(--ink-soft);margin-top:4px;line-height:1.45;}
+  .mh-prog{display:flex;align-items:center;justify-content:space-between;font-size:12.5px;color:var(--muted);margin-bottom:8px;}
+  .mh-bar{height:5px;background:#efe7ee;border-radius:99px;overflow:hidden;margin-bottom:20px;}
+  .mh-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ec3a8b,#a855f7);border-radius:99px;transition:width .3s;}
+  .aula-card{display:flex;align-items:center;gap:13px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 15px;margin-bottom:11px;box-shadow:var(--shadow-sm);width:100%;text-align:left;}
+  .aula-card .thumb{width:58px;height:40px;border-radius:9px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;font-size:18px;background:linear-gradient(135deg,#f6e8f1,#efe7fb);color:#c026d3;overflow:hidden;}
+  .aula-card .thumb img{width:100%;height:100%;object-fit:cover;}
+  .aula-card .ai{flex:1;min-width:0;}
+  .aula-card .ai b{display:block;font-size:15px;font-weight:700;color:var(--ink);}
+  .aula-card .ai span{display:block;font-size:12px;color:var(--muted);margin-top:1px;}
+  .aula-card .ck{font-size:16px;color:#cfc6d3;flex:0 0 auto;}
+  .aula-card .ck.done{color:#22c55e;}
+
+  /* ============ AULA (vídeo) ============ */
+  .aula-t{font-size:23px;font-weight:800;letter-spacing:-.3px;margin:2px 0 16px;}
+  .video-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:8px 8px 0;box-shadow:var(--shadow-sm);margin-bottom:18px;overflow:hidden;}
+  .video-box{position:relative;width:100%;padding-top:56.25%;border-radius:11px;overflow:hidden;background:#11070d;}
+  .video-box iframe{position:absolute;inset:0;width:100%;height:100%;border:0;}
+  .video-cap{font-size:12px;color:var(--muted);padding:9px 6px 10px;}
+  .btn-done{width:100%;padding:16px;border-radius:14px;font-size:15px;font-weight:800;color:#fff;background:linear-gradient(90deg,#e0317f,#c01464);box-shadow:0 8px 18px rgba(214,36,110,.28);margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px;transition:filter .15s;}
+  .btn-done.done{background:linear-gradient(90deg,#22c55e,#16a34a);box-shadow:0 8px 18px rgba(34,197,94,.28);}
+  .btn-next{width:100%;padding:15px;border-radius:14px;font-size:14.5px;font-weight:700;color:var(--pink);background:#fff;border:1.6px solid #f0c2d9;}
+  .btn-next:active,.btn-done:active{transform:scale(.99);}
+
   /* ============ SINTONIAS ============ */
   .tip{text-align:center;font-size:12.5px;color:var(--muted);font-style:italic;margin:-6px 0 16px;}
   .song{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px 15px;margin-bottom:11px;box-shadow:var(--shadow-sm);}
@@ -375,6 +404,35 @@
       <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px">As aulas serão liberadas dentro de cada módulo.</p>
     </section>
 
+    <!-- ---------- MÓDULO (detalhe / lista de aulas) ---------- -->
+    <section class="screen" id="s-modulo">
+      <button class="detail-back" onclick="go('metodo')">← Voltar aos módulos</button>
+      <div class="mod-head">
+        <div class="mh-em" id="mh-em">🌟</div>
+        <div>
+          <div class="mh-lbl" id="mh-lbl">MÓDULO</div>
+          <h1 id="mh-t">Módulo</h1>
+          <p id="mh-d" class="mh-d"></p>
+        </div>
+      </div>
+      <div class="mh-prog"><span id="mh-count">0/0 concluídas</span><span id="mh-pct" class="pct">0%</span></div>
+      <div class="mh-bar"><i id="mh-fill"></i></div>
+      <div id="aula-list"></div>
+    </section>
+
+    <!-- ---------- AULA (vídeo) ---------- -->
+    <section class="screen" id="s-aula">
+      <button class="detail-back" id="aula-back" onclick="">← Voltar</button>
+      <div class="mh-lbl" id="aula-lbl">MÓDULO</div>
+      <h1 class="aula-t" id="aula-t">Aula</h1>
+      <div class="video-card">
+        <div class="video-box" id="aula-video"></div>
+        <div class="video-cap" id="aula-cap"></div>
+      </div>
+      <button class="btn-done" id="aula-done" onclick="toggleConcluida()">⊚ Marcar como concluída</button>
+      <button class="btn-next" id="aula-next" onclick="">Próxima aula →</button>
+    </section>
+
     <!-- ---------- FERRAMENTAS ---------- -->
     <section class="screen" id="s-ferramentas">
       <div class="page-h"><h1>Ferramentas</h1><p>Suporte prático para cada momento</p></div>
@@ -475,14 +533,20 @@
 <script>
 /* ============ DADOS (extraídos dos mockups) ============ */
 var MODULOS = [
-  {em:'🌟', lbl:'Módulo Introdução', t:'Introdução e Boas-Vindas', d:'Assista antes de começar o protocolo.', aulas:3},
-  {em:'❤️', lbl:'Módulo 1', t:'Motivo do Término', d:'Entenda as causas reais do término e o que realmente aconteceu.', aulas:4},
-  {em:'✨', lbl:'Módulo 2', t:'O Protocolo dos 12 Dias', d:'O passo a passo completo para reativar o circuito emocional dele.', aulas:5},
-  {em:'🔍', lbl:'Módulo 3', t:'Casos Específicos e Diferentes', d:'O que fazer em situações fora do comum.', aulas:5},
-  {em:'💗', lbl:'Módulo 4', t:'A Volta Dele', d:'Como agir quando ele voltar e não estragar tudo.', aulas:4},
-  {em:'💬', lbl:'Módulo 5', t:'Comunicação Saudável', d:'Aprenda a se comunicar de forma que gera conexão real.', aulas:4},
-  {em:'🌱', lbl:'Módulo 6', t:'A Raiz de Tudo', d:'Entenda os padrões profundos que sabotam seus relacionamentos.', aulas:4}
+  {id:'intro', em:'🌟', lbl:'Módulo Introdução', t:'Introdução e Boas-Vindas', d:'Assista antes de começar o protocolo.', aulas:[
+    {n:'0.1', tit:'Aula 0.1', yt:'NuKzCa--g30'},
+    {n:'0.2', tit:'Aula 0.2', yt:'JFsEB35YcS8'},
+    {n:'0.3', tit:'Aula 0.3', yt:'sPlnkne4Uos'}
+  ]},
+  {id:'m1', em:'❤️', lbl:'Módulo 1', t:'Motivo do Término', d:'Entenda as causas reais do término e o que realmente aconteceu.', aulas:4},
+  {id:'m2', em:'✨', lbl:'Módulo 2', t:'O Protocolo dos 12 Dias', d:'O passo a passo completo para reativar o circuito emocional dele.', aulas:5},
+  {id:'m3', em:'🔍', lbl:'Módulo 3', t:'Casos Específicos e Diferentes', d:'O que fazer em situações fora do comum.', aulas:5},
+  {id:'m4', em:'💗', lbl:'Módulo 4', t:'A Volta Dele', d:'Como agir quando ele voltar e não estragar tudo.', aulas:4},
+  {id:'m5', em:'💬', lbl:'Módulo 5', t:'Comunicação Saudável', d:'Aprenda a se comunicar de forma que gera conexão real.', aulas:4},
+  {id:'m6', em:'🌱', lbl:'Módulo 6', t:'A Raiz de Tudo', d:'Entenda os padrões profundos que sabotam seus relacionamentos.', aulas:4}
 ];
+function aulasDe(m){ return Array.isArray(m.aulas) ? m.aulas : []; }
+function numAulas(m){ return Array.isArray(m.aulas) ? m.aulas.length : (m.aulas||0); }
 var SINTONIAS = ['🌊','🌸','💜','🌿','✨','❤️','🎵','🌙'];
 var SITUACOES = ['Sem contato há semanas','Conversa fria / distante','Ele está com outra','Fui bloqueada','Depois de uma briga','Ele respondeu depois de um tempo'];
 var OBJETIVOS = ['Quebrar o gelo','Reabrir contato','Gerar curiosidade','Marcar um encontro','Responder com leveza a uma frieza'];
@@ -573,11 +637,16 @@ function setBusy(p, on){
   var b=$('#'+p+'-btn'); b.disabled=on;
   if(on){ b.dataset.t=b.textContent; b.textContent='Aguarde…'; } else if(b.dataset.t){ b.textContent=b.dataset.t; }
 }
+function normData(d){
+  d = (d && typeof d==='object') ? d : {};
+  if(!Array.isArray(d.diario)) d.diario=[];
+  if(!d.aulas || typeof d.aulas!=='object') d.aulas={};   // {'intro|0.1':true,...}
+  return d;
+}
 function startSession(s, dados){
   session=s;
   localStorage.setItem('crm_session', JSON.stringify(s));
-  USERDATA = (dados && typeof dados==='object') ? dados : {diario:[]};
-  if(!Array.isArray(USERDATA.diario)) USERDATA.diario=[];
+  USERDATA = normData(dados);
   bootApp(s.nome);
 }
 function sair(){
@@ -621,15 +690,78 @@ function openSoon(title, desc){
 }
 
 /* ============ MÉTODO ============ */
+function aulaKey(modId, n){ return modId+'|'+n; }
+function concluidas(m){
+  var done=0; aulasDe(m).forEach(function(a){ if(USERDATA.aulas && USERDATA.aulas[aulaKey(m.id,a.n)]) done++; });
+  return done;
+}
 function renderModulos(){
-  $('#mod-list').innerHTML = MODULOS.map(function(m){
-    return '<button class="mod" onclick="openSoon(\''+esc(m.t)+'\',\'Aulas do módulo serão liberadas aqui.\')">'+
+  $('#mod-list').innerHTML = MODULOS.map(function(m,i){
+    var tot=numAulas(m), done=concluidas(m), pct=tot?Math.round(done/tot*100):0;
+    return '<button class="mod" onclick="openModulo('+i+')">'+
       '<div class="arr">→</div>'+
       '<div class="row1"><div class="em">'+m.em+'</div><div>'+
       '<div class="lbl">'+m.lbl+'</div><h3>'+m.t+'</h3><div class="desc">'+m.d+'</div></div></div>'+
-      '<div class="foot"><span class="aulas">0/'+m.aulas+' aulas</span><span class="pct">0%</span></div>'+
+      '<div class="foot"><span class="aulas">'+done+'/'+tot+' aulas</span><span class="pct">'+pct+'%</span></div>'+
     '</button>';
   }).join('');
+}
+
+/* ---- módulo (detalhe) + aula (vídeo) ---- */
+var curMod=0, curAula=0;
+function showOnly(id){
+  $all('.screen').forEach(function(s){ s.classList.remove('on'); });
+  $('#'+id).classList.add('on');
+  $all('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab==='metodo'); });
+  window.scrollTo(0,0);
+}
+function openModulo(i){
+  curMod=i; var m=MODULOS[i]; prev='metodo';
+  $('#mh-em').textContent=m.em; $('#mh-lbl').textContent=m.lbl;
+  $('#mh-t').textContent=m.t; $('#mh-d').textContent=m.d;
+  var aulas=aulasDe(m), tot=numAulas(m), done=concluidas(m), pct=tot?Math.round(done/tot*100):0;
+  $('#mh-count').textContent=done+'/'+tot+' concluídas';
+  $('#mh-pct').textContent=pct+'%'; $('#mh-fill').style.width=pct+'%';
+  if(aulas.length){
+    $('#aula-list').innerHTML=aulas.map(function(a,idx){
+      var dn=USERDATA.aulas&&USERDATA.aulas[aulaKey(m.id,a.n)];
+      return '<button class="aula-card" onclick="openAula('+i+','+idx+')">'+
+        '<div class="thumb"><img src="https://img.youtube.com/vi/'+esc(a.yt)+'/mqdefault.jpg" alt="" onerror="this.parentNode.textContent=\'▶\'"></div>'+
+        '<div class="ai"><b>'+esc(a.tit)+'</b><span>Videoaula</span></div>'+
+        '<div class="ck'+(dn?' done':'')+'">'+(dn?'✓':'→')+'</div></button>';
+    }).join('');
+  }else{
+    $('#aula-list').innerHTML='<div class="empty"><div class="ei">🎬</div><h3>Aulas em breve</h3><p>As videoaulas deste módulo serão liberadas aqui.</p></div>';
+  }
+  showOnly('s-modulo');
+}
+function openAula(modI, aulaI){
+  curMod=modI; curAula=aulaI;
+  var m=MODULOS[modI], aulas=aulasDe(m), a=aulas[aulaI];
+  $('#aula-back').textContent='← '+m.t;
+  $('#aula-back').onclick=function(){ openModulo(modI); };
+  $('#aula-lbl').textContent=m.lbl;
+  $('#aula-t').textContent=a.tit;
+  $('#aula-video').innerHTML='<iframe src="https://www.youtube.com/embed/'+esc(a.yt)+'?rel=0" title="'+esc(a.tit)+'" allow="accelerator; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
+  $('#aula-cap').textContent=m.lbl+' · '+a.tit;
+  renderDoneBtn();
+  var last = aulaI >= aulas.length-1;
+  var nb=$('#aula-next');
+  if(last){ nb.textContent='← Voltar ao método'; nb.onclick=function(){ go('metodo'); }; }
+  else    { nb.textContent='Próxima aula →';     nb.onclick=function(){ openAula(modI, aulaI+1); }; }
+  showOnly('s-aula');
+}
+function renderDoneBtn(){
+  var m=MODULOS[curMod], a=aulasDe(m)[curAula], dn=USERDATA.aulas&&USERDATA.aulas[aulaKey(m.id,a.n)];
+  var b=$('#aula-done');
+  b.classList.toggle('done', !!dn);
+  b.textContent = dn ? '✓ Aula concluída' : '⊚ Marcar como concluída';
+}
+function toggleConcluida(){
+  var m=MODULOS[curMod], a=aulasDe(m)[curAula], k=aulaKey(m.id,a.n);
+  if(!USERDATA.aulas) USERDATA.aulas={};
+  if(USERDATA.aulas[k]) delete USERDATA.aulas[k]; else USERDATA.aulas[k]=true;
+  renderDoneBtn(); renderModulos(); persist();
 }
 
 /* ============ SINTONIAS ============ */
@@ -693,7 +825,7 @@ function renderPlanner(){
 }
 
 /* ----- diário (dados do usuário — servidor, não cache) ----- */
-var USERDATA = {diario:[]};            // carregado no login/registro
+var USERDATA = {diario:[], aulas:{}};  // carregado no login/registro
 function diarioGet(){ return (USERDATA && USERDATA.diario) ? USERDATA.diario : []; }
 function renderDiario(){
   var a=diarioGet();
@@ -753,14 +885,12 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
     session=s;
     if(SERVER){
       gas({action:'load', email:s.email, token:s.token}).then(function(res){
-        USERDATA = (res && res.ok && res.dados) ? res.dados : {diario:[]};
-        if(!Array.isArray(USERDATA.diario)) USERDATA.diario=[];
+        USERDATA = normData(res && res.ok ? res.dados : null);
         bootApp(s.nome);
-      }).catch(function(){ USERDATA={diario:[]}; bootApp(s.nome); });
+      }).catch(function(){ USERDATA=normData(null); bootApp(s.nome); });
     }else{
       var u=localUsers(), rec=u[s.email];
-      USERDATA = (rec && rec.dados) ? rec.dados : {diario:[]};
-      if(!Array.isArray(USERDATA.diario)) USERDATA.diario=[];
+      USERDATA = normData(rec && rec.dados);
       bootApp(s.nome);
     }
   }
