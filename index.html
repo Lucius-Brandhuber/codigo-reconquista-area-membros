@@ -69,6 +69,16 @@
     display:flex;align-items:center;justify-content:center;gap:8px;transition:transform .1s,filter .1s;margin-top:6px;
   }
   .btn-grad:active{transform:scale(.985);}
+  .btn-grad[disabled]{opacity:.6;cursor:default;}
+
+  /* auth tabs */
+  .auth-tabs{display:flex;gap:6px;background:#f1eaf0;border-radius:13px;padding:5px;margin-bottom:18px;}
+  .auth-tab{flex:1;padding:11px 4px;border-radius:9px;font-size:14px;font-weight:700;color:#8a8392;}
+  .auth-tab.on{background:#fff;color:var(--pink);box-shadow:var(--shadow-sm);}
+  .auth-pane{display:none;}
+  .auth-pane.on{display:block;animation:fade .2s ease;}
+  .auth-err{font-size:12.5px;color:#d6246e;min-height:16px;margin:2px 2px 6px;text-align:left;}
+  .auth-hint{font-size:11.5px;color:var(--muted);margin-top:14px;line-height:1.4;}
 
   /* ============ APP SHELL ============ */
   #app{padding-bottom:78px;}
@@ -255,10 +265,30 @@
       <div class="gate-hi">Bem-vinda ao</div>
       <div class="gate-brand">Código da Reconquista<br>Magnética</div>
       <div class="gate-sub">Ative o Código de Reativação Emocional e pare de correr atrás de quem você ama</div>
-      <div class="gate-quote">"Você não está louca, nem fraca. Você só ama. E isso não é defeito — é força. Agora vamos transformar essa força em estratégia."</div>
-      <div class="field"><input id="g-name" type="text" placeholder="Como posso te chamar?" autocomplete="given-name"></div>
-      <div class="field"><input id="g-mail" type="email" placeholder="Seu melhor e-mail" autocomplete="email"></div>
-      <button class="btn-grad" onclick="entrar()">Começar minha jornada →</button>
+
+      <div class="auth-tabs">
+        <button class="auth-tab on" id="tab-login" onclick="authTab('login')">Entrar</button>
+        <button class="auth-tab" id="tab-reg" onclick="authTab('reg')">Criar conta</button>
+      </div>
+
+      <!-- LOGIN -->
+      <form class="auth-pane on" id="pane-login" onsubmit="return doLogin(event)">
+        <div class="field"><input id="li-mail" type="email" placeholder="E-mail da compra" autocomplete="email"></div>
+        <div class="field"><input id="li-pass" type="password" placeholder="Sua senha" autocomplete="current-password"></div>
+        <div class="auth-err" id="li-err"></div>
+        <button class="btn-grad" type="submit" id="li-btn">Entrar →</button>
+      </form>
+
+      <!-- REGISTRO -->
+      <form class="auth-pane" id="pane-reg" onsubmit="return doRegister(event)">
+        <div class="field"><input id="rg-name" type="text" placeholder="Como posso te chamar?" autocomplete="given-name"></div>
+        <div class="field"><input id="rg-mail" type="email" placeholder="E-mail usado na compra" autocomplete="email"></div>
+        <div class="field"><input id="rg-pass" type="password" placeholder="Crie uma senha (mín. 6 caracteres)" autocomplete="new-password"></div>
+        <div class="auth-err" id="rg-err"></div>
+        <button class="btn-grad" type="submit" id="rg-btn">Criar minha conta →</button>
+      </form>
+
+      <p class="auth-hint" id="auth-mode-hint"></p>
     </div>
   </section>
 
@@ -462,20 +492,103 @@ var prev = 'home';
 function $(s){return document.querySelector(s);}
 function $all(s){return document.querySelectorAll(s);}
 
-/* ============ ACESSO ============ */
-function entrar(){
-  var n = $('#g-name').value.trim();
-  var m = $('#g-mail').value.trim();
-  if(!n){ $('#g-name').focus(); return; }
-  if(!m || m.indexOf('@')<0){ $('#g-mail').focus(); return; }
-  localStorage.setItem('crm_user', JSON.stringify({name:n, mail:m, since:Date.now()}));
-  bootApp(n);
+/* ============ AUTH (Rota A: Google Apps Script + Sheets) ============ */
+/* >>> Depois de publicar o Apps Script (pasta /gas), cole a URL /exec aqui: */
+var GAS_AUTH = 'COLE_AQUI_A_URL_DO_APPS_SCRIPT';
+var SERVER = GAS_AUTH && !/COLE_AQUI/.test(GAS_AUTH);
+var session = null; // {email, nome, token}
+
+function authTab(which){
+  $('#tab-login').classList.toggle('on', which==='login');
+  $('#tab-reg').classList.toggle('on', which==='reg');
+  $('#pane-login').classList.toggle('on', which==='login');
+  $('#pane-reg').classList.toggle('on', which==='reg');
+  $('#li-err').textContent=''; $('#rg-err').textContent='';
 }
-function sair(){ localStorage.removeItem('crm_user'); location.reload(); }
+function emailOk(m){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m); }
+
+/* chama o GAS via POST text/plain (sem preflight) e lê a resposta JSON */
+function gas(payload){
+  return fetch(GAS_AUTH, {
+    method:'POST', redirect:'follow',
+    headers:{'Content-Type':'text/plain;charset=UTF-8'},
+    body: JSON.stringify(payload)
+  }).then(function(r){ return r.json(); });
+}
+/* hash local (fallback quando o servidor ainda não foi configurado) */
+async function sha256(s){
+  var buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s));
+  return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+}
+function localUsers(){ try{ return JSON.parse(localStorage.getItem('crm_users')||'{}'); }catch(e){ return {}; } }
+function setLocalUsers(u){ localStorage.setItem('crm_users', JSON.stringify(u)); }
+
+async function doRegister(ev){
+  if(ev) ev.preventDefault();
+  var nome=$('#rg-name').value.trim(), mail=$('#rg-mail').value.trim().toLowerCase(), pass=$('#rg-pass').value;
+  var err=$('#rg-err'); err.textContent='';
+  if(!nome){ err.textContent='Digite seu nome.'; return false; }
+  if(!emailOk(mail)){ err.textContent='Digite um e-mail válido.'; return false; }
+  if(pass.length<6){ err.textContent='A senha precisa ter ao menos 6 caracteres.'; return false; }
+  setBusy('rg', true);
+  try{
+    if(SERVER){
+      var res = await gas({action:'register', nome:nome, email:mail, senha:pass});
+      if(!res.ok){ err.textContent = res.error||'Não foi possível criar a conta.'; return false; }
+      startSession({email:mail, nome:res.nome||nome, token:res.token}, res.dados);
+    }else{
+      var u=localUsers();
+      if(u[mail]){ err.textContent='Esse e-mail já tem conta. Faça login.'; return false; }
+      u[mail]={nome:nome, hash:await sha256(mail+'|'+pass), dados:{diario:[]}};
+      setLocalUsers(u);
+      startSession({email:mail, nome:nome, token:'local'}, u[mail].dados);
+    }
+  }catch(e){ err.textContent='Erro de conexão. Tente de novo.'; return false; }
+  finally{ setBusy('rg', false); }
+  return false;
+}
+async function doLogin(ev){
+  if(ev) ev.preventDefault();
+  var mail=$('#li-mail').value.trim().toLowerCase(), pass=$('#li-pass').value;
+  var err=$('#li-err'); err.textContent='';
+  if(!emailOk(mail)){ err.textContent='Digite um e-mail válido.'; return false; }
+  if(!pass){ err.textContent='Digite sua senha.'; return false; }
+  setBusy('li', true);
+  try{
+    if(SERVER){
+      var res = await gas({action:'login', email:mail, senha:pass});
+      if(!res.ok){ err.textContent = res.error||'E-mail ou senha incorretos.'; return false; }
+      startSession({email:mail, nome:res.nome, token:res.token}, res.dados);
+    }else{
+      var u=localUsers(), rec=u[mail];
+      if(!rec){ err.textContent='E-mail não encontrado. Crie sua conta.'; return false; }
+      if(rec.hash !== await sha256(mail+'|'+pass)){ err.textContent='Senha incorreta.'; return false; }
+      startSession({email:mail, nome:rec.nome, token:'local'}, rec.dados);
+    }
+  }catch(e){ err.textContent='Erro de conexão. Tente de novo.'; return false; }
+  finally{ setBusy('li', false); }
+  return false;
+}
+function setBusy(p, on){
+  var b=$('#'+p+'-btn'); b.disabled=on;
+  if(on){ b.dataset.t=b.textContent; b.textContent='Aguarde…'; } else if(b.dataset.t){ b.textContent=b.dataset.t; }
+}
+function startSession(s, dados){
+  session=s;
+  localStorage.setItem('crm_session', JSON.stringify(s));
+  USERDATA = (dados && typeof dados==='object') ? dados : {diario:[]};
+  if(!Array.isArray(USERDATA.diario)) USERDATA.diario=[];
+  bootApp(s.nome);
+}
+function sair(){
+  localStorage.removeItem('crm_session'); session=null;
+  location.reload();
+}
 function bootApp(name){
   $('#gate').classList.add('hidden');
   $('#app').classList.remove('hidden');
-  $('#u-name').textContent = name.split(' ')[0];
+  $('#u-name').textContent = String(name||'você').split(' ')[0];
+  renderDiario();
   routeFromHash();
 }
 function routeFromHash(){
@@ -579,9 +692,9 @@ function renderPlanner(){
   $('#planner-list').innerHTML=out;
 }
 
-/* ----- diário (localStorage) ----- */
-function diarioGet(){ try{ return JSON.parse(localStorage.getItem('crm_diario')||'[]'); }catch(e){ return []; } }
-function diarioSet(a){ localStorage.setItem('crm_diario', JSON.stringify(a)); }
+/* ----- diário (dados do usuário — servidor, não cache) ----- */
+var USERDATA = {diario:[]};            // carregado no login/registro
+function diarioGet(){ return (USERDATA && USERDATA.diario) ? USERDATA.diario : []; }
 function renderDiario(){
   var a=diarioGet();
   if(!a.length){
@@ -606,19 +719,51 @@ function openDiario(){
 function closeDiario(){ var m=$('#diario-modal'); if(m) m.remove(); }
 function saveDiario(){
   var t=$('#diario-txt').value.trim(); if(!t){ $('#diario-txt').focus(); return; }
-  var a=diarioGet(); a.unshift({t:Date.now(),txt:t}); diarioSet(a); closeDiario(); renderDiario();
+  USERDATA.diario.unshift({t:Date.now(),txt:t}); closeDiario(); renderDiario(); persist();
 }
-function delDiario(i){ var a=diarioGet(); a.splice(i,1); diarioSet(a); renderDiario(); }
+function delDiario(i){ USERDATA.diario.splice(i,1); renderDiario(); persist(); }
+
+/* salva os dados do usuário (no servidor quando configurado; senão espelha local) */
+var _persistT=null;
+function persist(){
+  if(!session) return;
+  if(SERVER){
+    clearTimeout(_persistT);
+    _persistT=setTimeout(function(){
+      gas({action:'save', email:session.email, token:session.token, dados:USERDATA}).catch(function(){});
+    }, 500);
+  }else{
+    var u=localUsers(); if(u[session.email]){ u[session.email].dados=USERDATA; setLocalUsers(u); }
+  }
+}
 
 /* ============ util ============ */
 function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
 
 /* ============ INIT ============ */
 (function(){
-  renderModulos(); renderSintonias(); renderMsgOpts(); renderPlanner(); renderDiario();
+  renderModulos(); renderSintonias(); renderMsgOpts(); renderPlanner();
   ftab('emergencia');
-  var u=null; try{ u=JSON.parse(localStorage.getItem('crm_user')||'null'); }catch(e){}
-  if(u && u.name){ bootApp(u.name); }
+  $('#auth-mode-hint').textContent = SERVER
+    ? 'Seus dados ficam salvos na sua conta e acompanham você em qualquer aparelho.'
+    : '⚠️ Modo local (o backend ainda não foi configurado): as contas ficam só neste navegador.';
+  // restaura sessão
+  var s=null; try{ s=JSON.parse(localStorage.getItem('crm_session')||'null'); }catch(e){}
+  if(s && s.email){
+    session=s;
+    if(SERVER){
+      gas({action:'load', email:s.email, token:s.token}).then(function(res){
+        USERDATA = (res && res.ok && res.dados) ? res.dados : {diario:[]};
+        if(!Array.isArray(USERDATA.diario)) USERDATA.diario=[];
+        bootApp(s.nome);
+      }).catch(function(){ USERDATA={diario:[]}; bootApp(s.nome); });
+    }else{
+      var u=localUsers(), rec=u[s.email];
+      USERDATA = (rec && rec.dados) ? rec.dados : {diario:[]};
+      if(!Array.isArray(USERDATA.diario)) USERDATA.diario=[];
+      bootApp(s.nome);
+    }
+  }
 })();
 </script>
 </body>
