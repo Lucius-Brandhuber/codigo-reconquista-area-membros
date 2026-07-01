@@ -544,12 +544,15 @@
     <!-- ---------- BÔNUS ---------- -->
     <section class="screen" id="s-bonus">
       <div class="page-h"><h1>Bônus Exclusivos</h1><p>Conteúdos extras para potencializar sua reconquista</p></div>
-      <button class="bonus" onclick="openSoon('Mapa de Frases de Reativação Emocional','30 frases prontas para cada fase da reconquista.')">
-        <div class="bem">💎</div><div><h3>Mapa de Frases de Reativação Emocional</h3><p>30 frases prontas para cada fase da reconquista — do silêncio ao reencontro.</p></div><div class="arr">→</div></button>
-      <button class="bonus" onclick="openSoon('Roteiro de Conversa para Reencontro','Guia passo a passo para o primeiro encontro.')">
-        <div class="bem">🗺️</div><div><h3>Roteiro de Conversa para Reencontro</h3><p>Um guia passo a passo para o primeiro encontro depois do afastamento.</p></div><div class="arr">→</div></button>
-      <button class="bonus" onclick="openSoon('Checklist Anti-Auto-Sabotagem','As 25 armadilhas e como evitar cada uma.')">
-        <div class="bem">🛡️</div><div><h3>Checklist Anti-Auto-Sabotagem</h3><p>As 25 armadilhas que as mulheres caem durante a reconquista — e como evitar cada uma.</p></div><div class="arr">→</div></button>
+      <div id="bonus-list"></div>
+    </section>
+
+    <!-- ---------- BÔNUS DETALHE ---------- -->
+    <section class="screen" id="s-bonus-detail">
+      <button class="detail-back" id="bonus-back" onclick="go('bonus')">← Bônus</button>
+      <div id="bonus-hero" class="emer-hero"></div>
+      <div id="bonus-body"></div>
+      <a class="btn-done" id="bonus-download" href="#" download style="text-decoration:none;text-align:center;">📥 Baixar PDF</a>
     </section>
 
     <!-- ---------- DETALHE (em breve) ---------- -->
@@ -774,6 +777,107 @@ function openSoon(title, desc){
   $all('.screen').forEach(function(s){ s.classList.remove('on'); });
   $('#s-detail').classList.add('on');
   $all('.tab').forEach(function(t){ t.classList.remove('on'); });
+  window.scrollTo(0,0);
+}
+
+/* ============ BÔNUS ============ */
+var BONUS = [
+  {em:'🔥',lbl:'Bônus 1',tit:'Reativação das Emoções Ocultas',sub:'5 gatilhos invisíveis para despertar o desejo do início do relacionamento',
+   gradient:'linear-gradient(120deg,#f97316,#ec4899)',pdf:'bonus/bonus1.pdf',
+   body:'<div class="emer-card">'+
+     '<h3>A Paixão Não Morreu — Ela Apenas Adormeceu</h3>'+
+     '<p>Aquela química visceral do começo não desapareceu. Ela está soterrada sob a rotina e o "modo de defesa" dele. Este manual ensina a hackear o sistema límbico — a parte primitiva do cérebro onde mora o desejo.</p>'+
+     '<p><b>Os 5 Gatilhos Invisíveis:</b></p>'+
+     '<ol><li><b>Escassez Visual</b> — O efeito "Quase lá" que faz o cérebro dele valorizar o que é raro</li>'+
+     '<li><b>Dissonância Emocional</b> — Como criar uma contradição que ele não consegue ignorar</li>'+
+     '<li><b>Ancoragem Sensorial</b> — Usar cheiros, sons e memórias para reativar conexões profundas</li>'+
+     '<li><b>Espelhamento Reverso</b> — A técnica que faz ele se ver em você sem perceber</li>'+
+     '<li><b>Ruptura de Padrão</b> — Quebrar a previsibilidade que matou a atração</li></ol>'+
+     '<p>Cada gatilho vem com instruções práticas de aplicação imediata.</p>'+
+   '</div>'},
+  {em:'✉️',lbl:'Bônus 2',tit:'A Carta Proibida de Último Recurso',sub:'O Protocolo de Ruptura de Padrão para bloqueio ou silêncio prolongado',
+   gradient:'linear-gradient(120deg,#6d5cf5,#a855f7)',pdf:'bonus/bonus2.pdf',
+   body:'<div class="emer-card">'+
+     '<h3>O Seu Xeque-Mate</h3>'+
+     '<p>Esta não é uma mensagem comum. É um <b>Protocolo de Exceção</b> — desenhado estritamente para quando todas as outras tentativas falharam e você está bloqueada ou sem contato absoluto há semanas.</p>'+
+     '<p><b>O que contém:</b></p>'+
+     '<ul><li>A carta completa, palavra por palavra, pronta para enviar</li>'+
+     '<li>A psicologia por trás de cada parágrafo — por que funciona</li>'+
+     '<li>Instruções de envio (e-mail, carta física ou via alternativa)</li>'+
+     '<li>Protocolo pós-envio: o que fazer depois</li></ul>'+
+     '<p><b>⚠️ Aviso:</b> Ela não pede nada, não implora e não cobra. Use com extrema cautela — após o envio, não haverá mais espaço para estratégias de reaproximação gradual.</p>'+
+   '</div>'},
+  {em:'🎯',lbl:'Bônus 3',tit:'O Código do Ciúme Instantâneo',sub:'Sistema de prova social e reativação do instinto de posse',
+   gradient:'linear-gradient(120deg,#ec4899,#be185d)',pdf:'bonus/bonus3.pdf',
+   body:'<div class="emer-card">'+
+     '<h3>De "já tenho na mão" para "preciso disputar"</h3>'+
+     '<p>O ciúme não é apenas uma emoção negativa — é uma resposta biológica primitiva de proteção de recursos. Este bônus ensina a usar isso de forma cirúrgica.</p>'+
+     '<p><b>A Regra dos 80/20:</b></p>'+
+     '<ul><li><b>80% Autossuficiência</b> — Seu magnetismo real vem de estar bem, produtiva e feliz</li>'+
+     '<li><b>20% Gatilho de Competição</b> — O "tempero" sutil que quebra a inércia dele</li></ul>'+
+     '<p><b>Você vai aprender:</b></p>'+
+     '<ul><li>A "Arquitetura do Mistério" — como preparar sua vitrine digital</li>'+
+     '<li>O Efeito Fantasma — criar ausência estratégica que gera presença mental</li>'+
+     '<li>Prova Social calibrada — sem parecer forçada ou desesperada</li>'+
+     '<li>O erro do "ciúme agressivo" e por que ele destrói seu valor</li></ul>'+
+   '</div>'},
+  {em:'🛡️',lbl:'Bônus 4',tit:'Checklist Anti-Rejeição',sub:'Os 7 Erros Fatais que impedem sua reconquista — e como neutralizá-los',
+   gradient:'linear-gradient(120deg,#3b82f6,#7c3aed)',pdf:'bonus/bonus4.pdf',
+   body:'<div class="emer-card">'+
+     '<h3>O Filtro de Segurança</h3>'+
+     '<p>Antes de qualquer ação, mensagem ou interação com seu ex, aplique este checklist. Se marcar "SIM" em qualquer item — <b>PARE IMEDIATAMENTE</b>.</p>'+
+     '<p><b>Os 7 Erros Fatais:</b></p>'+
+     '<ol><li><b>Implorar</b> — A atração é movida pelo desejo de conquista, não pela piedade</li>'+
+     '<li><b>Stalking Digital</b> — Observar o perfil dele perpetua sua dependência emocional</li>'+
+     '<li><b>O Textão de Desculpas</b> — Explicações excessivas demonstram insegurança</li>'+
+     '<li><b>Disponibilidade Imediata</b> — Se responde instantaneamente, perde o valor</li>'+
+     '<li><b>Intermediários</b> — Pedir para amigos sondarem é prova final de fragilidade</li>'+
+     '<li><b>"Amizade Falsa"</b> — A friendzone é o túmulo do desejo</li>'+
+     '<li><b>Mudança "Para Ele"</b> — Se muda apenas para ele ver, continua refém do olhar dele</li></ol>'+
+   '</div>'},
+  {em:'🔍',lbl:'Bônus 5',tit:'Dossiê do Rival Descartável',sub:'Estratégia de "Contraste Imediato" para neutralizar a substituta',
+   gradient:'linear-gradient(120deg,#222a3a,#10141f)',pdf:'bonus/bonus5.pdf',
+   body:'<div class="emer-card">'+
+     '<h3>Você Não Compete — Você Se Posiciona</h3>'+
+     '<p>O relacionamento de rebote é baseado na negação, não na conexão real. Ele está buscando em outra pessoa uma "droga" para aliviar a ausência da sua presença.</p>'+
+     '<p><b>O que você vai aprender:</b></p>'+
+     '<ul><li><b>O Princípio da Desvantagem Desleal</b> — por que o rebote é fadado ao esgotamento</li>'+
+     '<li><b>O Efeito Espelho</b> — ele projeta você na nova parceira o tempo todo</li>'+
+     '<li><b>Sua Vantagem Competitiva</b> — você detém o "código emocional" que ela nunca terá</li>'+
+     '<li><b>A Tática do Contraste Silencioso</b> — sua maior arma é a ausência de reação</li>'+
+     '<li><b>A Proibição da Reação</b> — a nova parceira quer que você sinta raiva; não dê isso a ela</li></ul>'+
+   '</div>'},
+  {em:'💌',lbl:'Bônus 6',tit:'O Código da Mensagem Magnética',sub:'O Protocolo de 72 Horas para quebrar o "Modo de Defesa"',
+   gradient:'linear-gradient(120deg,#ec3a8b,#d6246e)',pdf:'bonus/bonus6.pdf',
+   body:'<div class="emer-card">'+
+     '<h3>O Seu Relógio de 72 Horas Começa Agora</h3>'+
+     '<p>Este é o guia principal — um protocolo psicológico completo de 14 páginas para fazer seu ex desejar voltar.</p>'+
+     '<p><b>O Protocolo:</b></p>'+
+     '<ol><li><b>A Ciência do Afastamento</b> — por que o cérebro dele precisa sentir sua falta primeiro</li>'+
+     '<li><b>O Detox de 24 Horas</b> — o reset emocional antes de qualquer ação</li>'+
+     '<li><b>A Mensagem Magnética</b> — a mensagem exata que quebra o modo de defesa</li>'+
+     '<li><b>O Protocolo de Resposta</b> — como reagir a cada tipo de resposta dele</li></ol>'+
+     '<p>Não é autoajuda. Não é conselho de amiga. É um sistema com base em psicologia comportamental e neurociência da atração.</p>'+
+   '</div>'}
+];
+function renderBonus(){
+  $('#bonus-list').innerHTML = BONUS.map(function(b,i){
+    return '<button class="bonus" onclick="openBonus('+i+')">'+
+      '<div class="bem">'+b.em+'</div><div><div style="font-size:11px;font-weight:700;color:var(--pink);margin-bottom:3px;">'+esc(b.lbl)+'</div><h3>'+esc(b.tit)+'</h3><p>'+esc(b.sub)+'</p></div><div class="arr">→</div></button>';
+  }).join('');
+}
+function openBonus(i){
+  var b=BONUS[i];
+  prev='bonus';
+  $('#bonus-hero').style.background=b.gradient;
+  $('#bonus-hero').innerHTML='<div class="emer-ico">'+b.em+'</div><div style="font-size:11px;font-weight:700;opacity:.8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;">'+esc(b.lbl)+'</div><h2>'+esc(b.tit)+'</h2><p>'+esc(b.sub)+'</p>';
+  $('#bonus-body').innerHTML=b.body;
+  $('#bonus-download').href=b.pdf;
+  $('#bonus-download').setAttribute('download',b.tit+'.pdf');
+  $all('.screen').forEach(function(s){s.classList.remove('on');});
+  $('#s-bonus-detail').classList.add('on');
+  $all('.tab').forEach(function(t){t.classList.remove('on');});
+  $('[data-tab="bonus"]').classList.add('on');
   window.scrollTo(0,0);
 }
 
@@ -1240,7 +1344,7 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
 
 /* ============ INIT ============ */
 (function(){
-  renderModulos(); renderSintonias(); renderMsgOpts(); renderPlanner();
+  renderModulos(); renderSintonias(); renderMsgOpts(); renderPlanner(); renderBonus();
   ftab('emergencia');
   $('#auth-mode-hint').textContent = SERVER
     ? 'Seus dados ficam salvos na sua conta e acompanham você em qualquer aparelho.'
