@@ -140,6 +140,13 @@
   .fcard.compact h3{font-size:15.5px;}
   .fcard.compact .sub{font-size:12px;opacity:.9;}
   .fcard.compact .arr{font-size:20px;}
+  .aula-rec{position:relative;overflow:hidden;margin-bottom:18px;}
+  .aula-rec>*{position:relative;z-index:1;}
+  .aula-rec::after{content:'';position:absolute;top:-34px;right:-34px;width:130px;height:130px;border-radius:50%;background:rgba(255,255,255,.13);z-index:0;}
+  .aula-rec .rec-eyebrow{font-size:10.5px;font-weight:800;letter-spacing:.09em;text-transform:uppercase;opacity:.82;margin-bottom:7px;}
+  .aula-rec p{white-space:normal;}
+  .aula-rec .fbtn{background:rgba(255,255,255,.2);}
+  .aula-rec .fbtn:active{transform:scale(.98);}
 
   .g-crise{background:linear-gradient(90deg,#ec4899,#d6246e);}
   .g-dark{background:linear-gradient(135deg,#222a3a,#10141f);}
@@ -429,6 +436,12 @@
         <div class="video-box" id="aula-video"></div>
         <div class="video-cap" id="aula-cap"></div>
       </div>
+      <div class="fcard g-purple aula-rec" id="aula-rec" style="display:none">
+        <div class="rec-eyebrow">Recomendação desta aula</div>
+        <h3 id="aula-rec-tit"></h3>
+        <p id="aula-rec-txt"></p>
+        <button class="fbtn" id="aula-rec-btn" onclick="">Acessar agora →</button>
+      </div>
       <button class="btn-done" id="aula-done" onclick="toggleConcluida()">⊚ Marcar como concluída</button>
       <button class="btn-next" id="aula-next" onclick="">Próxima aula →</button>
     </section>
@@ -549,7 +562,11 @@ var MODULOS = [
     {n:'2.2', tit:'Aula 2.2', yt:'nPXigozreGk'},
     {n:'2.3', tit:'Aula 2.3', yt:'si78McMwXTM'},
     {n:'2.4', tit:'Aula 2.4', yt:'2Q35UCToZ20'},
-    {n:'2.5', tit:'Aula 2.5', yt:'GaBAONh6RpY'}
+    {n:'2.5', tit:'Aula 2.5', yt:'GaBAONh6RpY', rec:{
+      tit:'Biblioteca das Respostas',
+      txt:'Você sabe o que fazer. Mas na hora H, as palavras travam.\nA Biblioteca das Respostas tem o texto exato pra mais de 40 situações reais — primeiro contato, reencontro, quando ele some, quando ele responde frio, quando ele manda mensagem de madrugada.\nVocê abre, acha a situação, usa o texto. Sem improvisar.',
+      soon:'Biblioteca completa de respostas por situação.'
+    }}
   ]},
   {id:'m3', em:'🔍', lbl:'Módulo 3', t:'Casos Específicos e Diferentes', d:'O que fazer em situações fora do comum.', aulas:5},
   {id:'m4', em:'💗', lbl:'Módulo 4', t:'A Volta Dele', d:'Como agir quando ele voltar e não estragar tudo.', aulas:4},
@@ -755,6 +772,15 @@ function openAula(modI, aulaI){
   $('#aula-t').textContent=a.tit;
   $('#aula-video').innerHTML='<iframe src="https://www.youtube.com/embed/'+esc(a.yt)+'?rel=0" title="'+esc(a.tit)+'" allow="accelerator; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>';
   $('#aula-cap').textContent=m.lbl+' · '+a.tit;
+  var rc=$('#aula-rec');
+  if(a.rec){
+    $('#aula-rec-tit').textContent=a.rec.tit;
+    $('#aula-rec-txt').innerHTML=esc(a.rec.txt).replace(/\n/g,'<br>');
+    var rb=$('#aula-rec-btn');
+    rb.textContent=a.rec.cta||'Acessar agora →';
+    rb.onclick=function(){ openSoon(a.rec.tit, a.rec.soon||''); };
+    rc.style.display='';
+  }else{ rc.style.display='none'; }
   renderDoneBtn();
   var last = aulaI >= aulas.length-1;
   var nb=$('#aula-next');
