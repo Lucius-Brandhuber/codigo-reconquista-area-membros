@@ -207,6 +207,8 @@
   .play.playing{background:linear-gradient(135deg,#22c55e,#16a34a);}
   .song .si{flex:1;min-width:0;}
   .song .si b{font-size:14.5px;font-weight:700;}
+  .song .sub-lbl{font-size:11.5px;color:var(--muted);margin-top:2px;}
+  .song.disabled{opacity:.5;}
   .wave{display:flex;align-items:flex-end;gap:2px;height:14px;margin-top:5px;opacity:.6;}
   .wave i{width:2.5px;background:linear-gradient(180deg,#e05ad6,#a855f7);border-radius:2px;display:block;}
   .song .emo{font-size:18px;width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:#f6f1f7;flex:0 0 auto;}
@@ -624,7 +626,16 @@ var MODULOS = [
 ];
 function aulasDe(m){ return Array.isArray(m.aulas) ? m.aulas : []; }
 function numAulas(m){ return Array.isArray(m.aulas) ? m.aulas.length : (m.aulas||0); }
-var SINTONIAS = ['🌊','🌸','💜','🌿','✨','❤️','🎵','🌙'];
+var SINTONIAS = [
+  {em:'🌊',lbl:'Cura & Solfeggio',sub:'Frequência 10kHz + 9 Tons de Solfeggio',src:'audio/sintonia1.mp3'},
+  {em:'🌸',lbl:'Calma Interior',sub:'Relaxamento profundo & alívio do stress',src:'audio/sintonia2.mp3'},
+  {em:'💜',lbl:'Energia Positiva',sub:'Meditação de 5 min para corpo e mente',src:'audio/sintonia3.mp3'},
+  {em:'🌿',lbl:'Paz Zen',sub:'Meditação oriental para equilíbrio',src:'audio/sintonia4.mp3'},
+  {em:'✨',lbl:'Purificação',sub:'Limpeza energética e proteção',src:'audio/sintonia5.mp3'},
+  {em:'❤️',lbl:'Sintonia 6',sub:'Em breve'},
+  {em:'🎵',lbl:'Sintonia 7',sub:'Em breve'},
+  {em:'🌙',lbl:'Sintonia 8',sub:'Em breve'}
+];
 var SITUACOES = ['Sem contato há semanas','Conversa fria / distante','Ele está com outra','Fui bloqueada','Depois de uma briga','Ele respondeu depois de um tempo'];
 var OBJETIVOS = ['Quebrar o gelo','Reabrir contato','Gerar curiosidade','Marcar um encontro','Responder com leveza a uma frieza'];
 
@@ -931,22 +942,41 @@ function toggleConcluida(){
 }
 
 /* ============ SINTONIAS ============ */
+var sintAudio=null, sintIdx=-1;
+var PLAY_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+var PAUSE_SVG='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>';
 function renderSintonias(){
-  var bars = '';
-  for(var i=0;i<14;i++){ bars += '<i style="height:'+(4+Math.round(Math.random()*10))+'px"></i>'; }
-  $('#song-list').innerHTML = SINTONIAS.map(function(emo,i){
-    return '<div class="song">'+
-      '<button class="play" onclick="playSint(this,'+i+')"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></button>'+
-      '<div class="si"><b>Sintonia '+(i+1)+'</b><div class="wave">'+bars+'</div></div>'+
-      '<div class="emo">'+emo+'</div></div>';
+  var bars='';
+  for(var i=0;i<14;i++) bars+='<i style="height:'+(4+Math.round(Math.random()*10))+'px"></i>';
+  $('#song-list').innerHTML = SINTONIAS.map(function(s,i){
+    var hasAudio=!!s.src;
+    return '<div class="song'+(hasAudio?'':' disabled')+'" id="song-'+i+'">'+
+      '<button class="play" onclick="playSint('+i+')"'+(hasAudio?'':' disabled')+'>'+PLAY_SVG+'</button>'+
+      '<div class="si"><b>'+esc(s.lbl)+'</b><div class="sub-lbl">'+esc(s.sub)+'</div><div class="wave">'+bars+'</div></div>'+
+      '<div class="emo">'+s.em+'</div></div>';
   }).join('');
 }
-function playSint(btn){
-  // Sem áudio ainda — os arquivos de frequência serão adicionados depois.
-  var on = btn.classList.toggle('playing');
-  btn.innerHTML = on
-    ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg>'
-    : '<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>';
+function playSint(i){
+  var s=SINTONIAS[i];
+  if(!s.src) return;
+  if(sintIdx===i && sintAudio){
+    if(sintAudio.paused){ sintAudio.play(); setSintUI(i,true); }
+    else { sintAudio.pause(); setSintUI(i,false); }
+    return;
+  }
+  if(sintAudio){ sintAudio.pause(); setSintUI(sintIdx,false); }
+  sintAudio=new Audio(s.src);
+  sintIdx=i;
+  sintAudio.play();
+  setSintUI(i,true);
+  sintAudio.onended=function(){ setSintUI(i,false); sintIdx=-1; };
+}
+function setSintUI(i,playing){
+  var card=$('#song-'+i);
+  if(!card) return;
+  var btn=card.querySelector('.play');
+  btn.classList.toggle('playing',playing);
+  btn.innerHTML=playing?PAUSE_SVG:PLAY_SVG;
 }
 
 /* ============ FERRAMENTAS: tabs ============ */
