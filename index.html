@@ -269,6 +269,31 @@
   .soon-box p{font-size:13.5px;color:var(--ink-soft);line-height:1.55;}
   .soon-tag{display:inline-block;margin-top:16px;padding:7px 16px;border-radius:99px;background:#fdeef6;color:var(--pink-d);font-size:12.5px;font-weight:700;}
 
+  /* emergencia detail */
+  .emer-hero{border-radius:16px;padding:20px;color:#fff;margin-bottom:20px;}
+  .emer-hero .emer-ico{font-size:28px;margin-bottom:8px;}
+  .emer-hero h2{font-size:20px;font-weight:800;margin-bottom:4px;}
+  .emer-hero p{font-size:13.5px;opacity:.9;}
+  .emer-card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 20px;margin-bottom:16px;box-shadow:var(--shadow-sm);}
+  .emer-card h3{font-size:17px;font-weight:800;margin-bottom:12px;}
+  .emer-card p,.emer-card li{font-size:14px;color:var(--ink);line-height:1.65;}
+  .emer-card p{margin-bottom:10px;}
+  .emer-card ul{list-style:none;padding:0;}
+  .emer-card ul li{padding:6px 0;position:relative;padding-left:16px;}
+  .emer-card ul li::before{content:'•';position:absolute;left:0;color:var(--pink);}
+  .emer-card ol{padding-left:0;list-style:none;counter-reset:emer;}
+  .emer-card ol li{padding:8px 0;padding-left:24px;position:relative;counter-increment:emer;}
+  .emer-card ol li::before{content:counter(emer)'.';position:absolute;left:0;color:var(--pink);font-weight:700;}
+  .emer-card b{font-weight:700;}
+  .emer-exercicio{background:#fdf2f6;border:1px solid #f5d5e3;border-radius:16px;padding:22px 20px;margin-bottom:16px;}
+  .emer-exercicio .ex-label{font-size:13px;font-weight:800;color:var(--pink);margin-bottom:10px;}
+  .emer-exercicio h4{font-size:15.5px;font-weight:800;margin-bottom:10px;}
+  .emer-exercicio p,.emer-exercicio li{font-size:14px;color:var(--ink);line-height:1.65;}
+  .emer-exercicio p{margin-bottom:10px;}
+  .emer-exercicio ol{padding-left:0;list-style:none;counter-reset:ex;}
+  .emer-exercicio ol li{padding:8px 0;padding-left:24px;position:relative;counter-increment:ex;}
+  .emer-exercicio ol li::before{content:counter(ex)'.';position:absolute;left:0;color:var(--pink);font-weight:700;}
+
   /* ============ BOTTOM NAV ============ */
   .tabbar{
     position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:var(--maxw);
@@ -464,9 +489,9 @@
       <!-- emergencia -->
       <div class="ftab" id="ft-emergencia">
         <p class="tool-intro">Selecione o que está sentindo agora. Sem julgamentos 💛</p>
-        <button class="ecard g-violet" onclick="openSoon('Crise de Ansiedade','Protocolo guiado para acalmar a ansiedade agora.')">
+        <button class="ecard g-violet" onclick="openEmergencia('ansiedade')">
           <div class="ee">😰</div><div class="et"><b>Crise de Ansiedade</b><span>Estou ansiosa e não consigo parar de pensar nele</span></div><div class="arr">→</div></button>
-        <button class="ecard g-pink" onclick="openSoon('Vontade de Mandar Textão','O que fazer antes de mandar aquela mensagem impulsiva.')">
+        <button class="ecard g-pink" onclick="openEmergencia('textao')">
           <div class="ee">📱</div><div class="et"><b>Vontade de Mandar Textão</b><span>Quero mandar um textão agora mesmo</span></div><div class="arr">→</div></button>
         <button class="ecard g-orange" onclick="openSoon('Vi Ele com Outra','Como processar e reagir com estratégia.')">
           <div class="ee">💔</div><div class="et"><b>Vi Ele com Outra</b><span>Acabei de ver ele com outra pessoa</span></div><div class="arr">→</div></button>
@@ -526,6 +551,13 @@
         <p id="d-desc"></p>
         <div class="soon-tag">Liberado em breve</div>
       </div>
+    </section>
+
+    <!-- ---------- EMERGÊNCIA DETALHE ---------- -->
+    <section class="screen" id="s-emergencia">
+      <button class="detail-back" id="emer-back" onclick="back()">← Kit de Emergência</button>
+      <div id="emer-hero" class="emer-hero"></div>
+      <div id="emer-body"></div>
     </section>
 
     <!-- ---------- BOTTOM NAV ---------- -->
@@ -723,6 +755,64 @@ function openSoon(title, desc){
   $all('.screen').forEach(function(s){ s.classList.remove('on'); });
   $('#s-detail').classList.add('on');
   $all('.tab').forEach(function(t){ t.classList.remove('on'); });
+  window.scrollTo(0,0);
+}
+
+/* ============ EMERGÊNCIA ============ */
+var EMERGENCIAS = {
+  ansiedade: {
+    ico:'😰', tit:'Crise de Ansiedade', sub:'Estou ansiosa e não consigo parar de pensar nele',
+    gradient:'linear-gradient(120deg,#6d5cf5,#a855f7)',
+    body:'<div class="emer-card">'+
+      '<h3>Respira. Você vai ficar bem. 💛</h3>'+
+      '<p>Respira. Você está segura agora.</p>'+
+      '<p>O que está sentindo é real, mas vai passar. Seu corpo está em modo de alerta porque seu cérebro interpretou essa situação como uma ameaça — mas você NÃO está em perigo.</p>'+
+      '<p><b>O que está acontecendo no seu corpo:</b></p>'+
+      '<p>Seu sistema nervoso está ativado. Coração acelerado, mãos frias, pensamentos acelerados. Isso é a sua amígdala cerebral reagindo ao medo de perda.</p>'+
+      '<p><b>Isso NÃO significa que:</b></p>'+
+      '<ul><li>Você vai perder ele para sempre</li><li>Você fez algo irreversível</li><li>Você é fraca ou louca</li><li>Você precisa agir AGORA</li></ul>'+
+    '</div>'+
+    '<div class="emer-exercicio">'+
+      '<div class="ex-label">Exercício prático</div>'+
+      '<h4>Exercício: Respiração 4-7-8 (faça agora)</h4>'+
+      '<ol><li>Inspire pelo nariz contando até 4</li><li>Segure a respiração contando até 7</li><li>Expire pela boca contando até 8</li><li>Repita 4 vezes</li></ol>'+
+      '<p>Depois da respiração, escreva 3 coisas que você pode ver agora ao seu redor. Isso ativa o córtex pré-frontal e desativa o modo pânico.</p>'+
+      '<p><b>Lembre:</b> A urgência que você sente agora é ilusória. Nada precisa ser feito nas próximas horas.</p>'+
+    '</div>'
+  },
+  textao: {
+    ico:'📱', tit:'Vontade de Mandar Textão', sub:'Quero mandar um textão agora mesmo',
+    gradient:'linear-gradient(120deg,#ec4899,#be185d)',
+    body:'<div class="emer-card">'+
+      '<h3>Respira. Você vai ficar bem. 💛</h3>'+
+      '<p>PARE. Larga o celular. Não é agora.</p>'+
+      '<p>Eu sei que parece urgente. Parece que se você não falar AGORA, vai explodir. Mas pense comigo:</p>'+
+      '<p><b>Toda vez que você mandou textão, o que aconteceu?</b></p>'+
+      '<ul><li>Ele ficou em silêncio?</li><li>Respondeu com frieza?</li><li>Você se sentiu pior depois?</li></ul>'+
+      '<p>O textão é a Saturação Emocional em forma de texto. Ele alivia por 5 minutos e destrói por semanas.</p>'+
+      '<p><b>A verdade:</b> Se o que você quer dizer é importante de verdade, vai continuar sendo importante amanhã. E amanhã você vai saber dizer de um jeito melhor.</p>'+
+    '</div>'+
+    '<div class="emer-exercicio">'+
+      '<div class="ex-label">Exercício prático</div>'+
+      '<h4>Exercício: Textão Terapêutico</h4>'+
+      '<p>Em vez de mandar para ele, faça isso:</p>'+
+      '<ol><li>Abra o bloco de notas do celular</li><li>Escreva TUDO que quer dizer (pode ser longo, dramático, choroso)</li><li>Leia em voz alta para você mesma</li><li>Agora responda: &quot;Isso vai me aproximar ou afastar dele?&quot;</li><li>Delete o texto</li></ol>'+
+      '<p><b>Agora escreva a versão &quot;código ativado&quot;:</b></p>'+
+      '<ul><li>Máximo de 2 frases</li><li>Tom leve</li><li>Sem cobranças</li><li>Se ainda quiser mandar, espere 24 horas</li></ul>'+
+    '</div>'
+  }
+};
+function openEmergencia(id){
+  var e = EMERGENCIAS[id];
+  if(!e){ openSoon(id,''); return; }
+  prev='ferramentas';
+  $('#emer-hero').style.background = e.gradient;
+  $('#emer-hero').innerHTML = '<div class="emer-ico">'+e.ico+'</div><h2>'+e.tit+'</h2><p>'+e.sub+'</p>';
+  $('#emer-body').innerHTML = e.body;
+  $all('.screen').forEach(function(s){ s.classList.remove('on'); });
+  $('#s-emergencia').classList.add('on');
+  $all('.tab').forEach(function(t){ t.classList.remove('on'); });
+  $('[data-tab="home"]').classList.add('on');
   window.scrollTo(0,0);
 }
 
