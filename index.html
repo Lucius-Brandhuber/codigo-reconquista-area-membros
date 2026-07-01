@@ -244,6 +244,14 @@
   .gen-btn{width:100%;margin-top:22px;padding:17px;border-radius:14px;font-size:15.5px;font-weight:800;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;background:linear-gradient(90deg,#f0a9c7,#e98bb4);box-shadow:0 8px 18px rgba(233,139,180,.3);transition:filter .15s;}
   .gen-btn.ready{background:linear-gradient(90deg,#ec3a8b,#d6246e);}
   .gen-out{margin-top:18px;}
+  .msg-result-hdr{font-size:13px;font-weight:800;color:var(--pink);text-transform:uppercase;letter-spacing:.06em;margin-bottom:14px;}
+  .msg-card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:12px;box-shadow:var(--shadow-sm);position:relative;}
+  .msg-card .msg-tag{font-size:10px;font-weight:700;color:var(--pink);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;}
+  .msg-card .msg-txt{font-size:14.5px;color:var(--ink);line-height:1.6;white-space:pre-wrap;}
+  .msg-card .msg-tip{font-size:12px;color:var(--muted);margin-top:10px;line-height:1.5;font-style:italic;}
+  .msg-card .msg-copy{position:absolute;top:12px;right:12px;width:34px;height:34px;border-radius:10px;background:#fdeef6;color:var(--pink);display:flex;align-items:center;justify-content:center;font-size:14px;}
+  .msg-card .msg-copy.copied{background:#22c55e;color:#fff;}
+  .msg-aviso{background:#fdf2f6;border:1px solid #f5d5e3;border-radius:14px;padding:16px 18px;margin-top:8px;font-size:13px;color:var(--ink-soft);line-height:1.55;}
 
   /* planner */
   .pday{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:15px 16px;margin-bottom:10px;box-shadow:var(--shadow-sm);}
@@ -960,13 +968,183 @@ function pickOpt(btn,k,i){
   if(k==='sit') selSit=i; else selObj=i;
   $('#gen-btn').classList.toggle('ready', selSit!=null && selObj!=null);
 }
+var MSGS={
+'0-0':[
+  {t:'Oi, vi uma coisa hoje que me lembrou da gente. Espero que esteja bem 🙂',tip:'Curta, leve, sem cobrança. Mostra que ele cruzou seu pensamento sem parecer que você ficou pensando nele o dia todo.'},
+  {t:'Acabei de passar naquele lugar que a gente ia e sorri sozinha. Enfim, bom dia 😊',tip:'Ancora uma memória positiva sem pedir nada. Ele vai lembrar do momento e associar você a algo bom.'},
+  {t:'Ei, achei um meme que é a sua cara. Quer ver? 😂',tip:'O humor é o melhor quebra-gelo. Ele pode responder sem se comprometer emocionalmente — e é exatamente isso que você quer agora.'}
+],
+'0-1':[
+  {t:'Oi! Não sei se é estranho mandar mensagem assim do nada, mas pensei em você hoje.',tip:'A honestidade desarma. Admitir que pode ser "estranho" mostra maturidade e tira a pressão dele.'},
+  {t:'Ei, vi [algo relacionado a ele — série, time, música] e pensei em você. Como você tá?',tip:'Personalize com algo que ele gosta. Mostra que você lembra dos interesses dele sem parecer stalker.'},
+  {t:'Oi 🙂 sei que faz tempo. Só queria dizer que torço por você.',tip:'Zero cobrança. Ele lê e pensa "ela está bem, madura, e não quer nada de mim" — e paradoxalmente isso atrai.'}
+],
+'0-2':[
+  {t:'Sabia que [fato curioso]? Lembrei na hora de quando a gente conversava sobre isso 😄',tip:'Fato curioso + memória compartilhada = ele vai querer responder. O cérebro humano é programado pra fechar ciclos de curiosidade.'},
+  {t:'Tô aprendendo algo novo e é tão bom. Te conto depois se quiser 😊',tip:'Mostra evolução pessoal + gera curiosidade. "Se quiser" dá a ele o poder de escolha — e pessoas escolhem o que parece escasso.'},
+  {t:'Aconteceu uma coisa engraçada hoje e por algum motivo pensei em contar pra você 😂',tip:'Ele vai morrer de curiosidade pra saber o que aconteceu. Mas NÃO conte na mesma mensagem — espere ele perguntar.'}
+],
+'0-3':[
+  {t:'Descobri um lugar incrível pra [café/comida/trilha]. Acho que você ia gostar. Bora um dia?',tip:'Convite casual, sem peso. "Um dia" é vago o suficiente pra não assustar mas concreto o suficiente pra plantar a semente.'},
+  {t:'Vi que vai ter [evento/show/filme]. Topa ir comigo? Sem compromisso, só diversão 😊',tip:'"Sem compromisso" tira a pressão. Ele aceita mais fácil quando não parece um encontro oficial.'},
+  {t:'Ei, quero te pagar aquele café que eu devia. Que tal [dia]?',tip:'Uma "dívida" pendente é um pretexto perfeito. Leve, concreto, com data. Ele não precisa se comprometer emocionalmente pra aceitar.'}
+],
+'0-4':[
+  {t:'Entendo. Espero que esteja tudo bem com você de verdade 🙂',tip:'Quando ele responde frio após semanas sem contato, a pior coisa é insistir. Essa resposta mostra classe e planta uma semente de dúvida nele: "ela mudou".'},
+  {t:'Tá tudo certo! Só quis dizer oi mesmo. Boa semana 💛',tip:'Encerra sem drama. Ele esperava cobrança e recebeu leveza — isso desregula a expectativa dele e faz ele repensar.'},
+  {t:'Sem problema 😊 fico feliz em saber que está bem.',tip:'Curta e madura. Mostra que você não está desesperada. O silêncio depois dessa mensagem fala mais alto que qualquer textão.'}
+],
+'1-0':[
+  {t:'Vi isso e pensei em você na hora 😂 [manda um meme ou foto engraçada]',tip:'Humor quebra qualquer muro de frieza. Ele pode estar distante por medo — rir junto cria um atalho emocional.'},
+  {t:'Ei, posso te fazer uma pergunta rápida? Prometo que não é nada pesado 😊',tip:'Curiosidade + promessa de leveza. Ele vai responder querendo saber o que é. Faça uma pergunta sobre algo que ele domina — as pessoas amam mostrar conhecimento.'},
+  {t:'Sabe o que é engraçado? Tô aqui fazendo [atividade] e do nada lembrei de quando a gente [memória engraçada]',tip:'Memórias positivas liberam dopamina. Ele vai sorrir antes de conseguir manter a cara fechada.'}
+],
+'1-1':[
+  {t:'Ei, faz um tempo que a gente tá nessa vibe estranha. Não precisa responder nada, só quero que saiba que eu valorizo o que a gente viveu.',tip:'Vulnerabilidade com dignidade. Não pede nada, não cobra, só reconhece. Isso é inesperado e poderoso.'},
+  {t:'Oi! Espero que esteja tudo bem. Se quiser conversar um dia, tô por aqui 🙂',tip:'Porta aberta sem pressão. A decisão fica com ele, e isso é exatamente o que faz alguém querer entrar.'},
+  {t:'Passei por aquele restaurante nosso ontem. Fiquei sorrindo sozinha. Espero que esteja bem 💛',tip:'Nostalgia positiva sem cobrança. A palavra "nosso" reconecta sem forçar. O emoji amarelo é carinhoso sem ser romântico demais.'}
+],
+'1-2':[
+  {t:'Aconteceu uma coisa que mudou meu jeito de ver algo que a gente discutia. Um dia te conto.',tip:'Mistério + evolução pessoal. Ele vai querer saber o que mudou — e "um dia" mantém o suspense.'},
+  {t:'Tô numa fase tão boa que até eu mesma tô surpresa 😄',tip:'Status update positivo, sem direcionamento. Ele vai ver e pensar "o que ela tá fazendo de diferente?" — e a curiosidade vai corroer.'},
+  {t:'Sabia que [dado interessante sobre algo que ele gosta]? Achei isso e lembrei da sua cara de nerd 😂',tip:'Mostra que você lembra dos gostos dele + humor + informação nova. Trio perfeito pra ele querer interagir.'}
+],
+'1-3':[
+  {t:'Ei, [lugar/evento] parece incrível. Se quiser uma companhia divertida, tô dentro 😊',tip:'Convite casual que posiciona você como a opção divertida, não a ex carente. Inversão estratégica de papel.'},
+  {t:'Estou saindo pra tomar um café no [lugar] sábado. Se quiser aparecer, ia ser legal 🙂',tip:'Convite sem pressão com dia e lugar definidos. Ele sabe que você vai de qualquer jeito — não parece dependência.'},
+  {t:'Faz tempo que eu quero experimentar [restaurante/atividade]. Preciso de um parceiro de aventura, topa?',tip:'"Parceiro de aventura" é leve e divertido. Não é "encontro", não é "conversar sobre nós". É só viver algo legal juntos.'}
+],
+'1-4':[
+  {t:'Tudo bem 🙂 cada um no seu tempo. Se mudar de ideia, sabe onde me encontrar.',tip:'Respeita o espaço sem se rebaixar. "Sabe onde me encontrar" mostra disponibilidade com dignidade.'},
+  {t:'Ok! Entendo perfeitamente. Fica bem 💛',tip:'Duas palavras e um emoji. A brevidade é a mensagem real: "eu não preciso disso". Isso impacta mais que mil palavras.'},
+  {t:'Sem problema, de verdade. A gente sempre pode conversar quando for natural. Cuida-se!',tip:'"Quando for natural" tira toda a pressão e planta a ideia de que haverá um momento certo — e ele vai começar a procurar esse momento.'}
+],
+'2-0':[
+  {t:'Oi! Quanto tempo 😊 Espero que esteja tudo bem por aí.',tip:'Quando ele está com outra, a última coisa que ele espera é leveza. Essa mensagem mostra que você está acima do drama.'},
+  {t:'Ei! Vi [referência a algo que ele gosta] e pensei na gente rindo disso. Enfim, boa semana!',tip:'Memória positiva + despedida rápida. Ele compara a leveza sua com a realidade do relacionamento novo. A comparação trabalha a seu favor.'},
+  {t:'Oi, tudo bem? 🙂 Sem segundas intenções, só queria saber como você está.',tip:'"Sem segundas intenções" é paradoxalmente o que mais gera segunda intenção na mente dele. Transparência é magnética.'}
+],
+'2-1':[
+  {t:'Ei, sei que a vida seguiu pra nós dois. Só quero que saiba que desejo o melhor pra você, de verdade.',tip:'Quando ele está com outra, essa mensagem é devastadora — no bom sentido. Ela mostra maturidade, faz ele comparar, e planta saudade.'},
+  {t:'Oi! Faz tempo. Não quero atrapalhar nada, só queria te desejar coisas boas 💛',tip:'"Não quero atrapalhar" mostra que você sabe da outra sem drama. Classe pura. Ele vai pensar nisso por dias.'},
+  {t:'Passei por [lugar nosso] e sorri. Espero que você esteja feliz, de coração.',tip:'Generosidade emocional quando ele esperava ciúme. Essa inversão é o que faz a reconquista funcionar.'}
+],
+'2-2':[
+  {t:'Tô fazendo [algo incrível] e tô amando! Nem parece eu de antes 😄',tip:'Poste isso em rede social ou mande de forma casual. A mensagem real é: "eu mudei, cresci, e tô vivendo". Ele vai comparar e sentir falta.'},
+  {t:'Acabei de receber [novidade boa]. A vida tá tão diferente... no melhor sentido.',tip:'Evolução pessoal visível é a maior arma quando ele está com outra. Ele escolheu a outra achando que você ia parar. Quando você avança, ele repensa.'},
+  {t:'Estava pensando no que eu quero pro meu futuro. É bom ter clareza, sabe? 😊',tip:'Maturidade + visão de futuro. Ele vai se perguntar se entra nesse futuro. E a dúvida é mais poderosa que qualquer declaração.'}
+],
+'2-3':[
+  {t:'Ei, vou num [evento/lugar] com amigos. Se quiser aparecer com seu pessoal, ia ser divertido 🙂',tip:'Convite em grupo, sem clima de encontro. Você mostra que a vida social está ativa e ele pode participar sem compromisso.'},
+  {t:'Tô querendo ir naquele [lugar que ele gostava]. Alguém quer ir comigo? Se tiver livre, topa?',tip:'Casual e sem peso. "Alguém" dilui a pressão. Ele sente que é uma opção, não a opção — e isso faz ele querer ser escolhido.'},
+  {t:'Vou fazer [atividade] no [dia]. Zero drama, só diversão. Vem?',tip:'"Zero drama" é a frase mágica quando ele está com outra. Ele provavelmente está vivendo drama com ela. Você oferece o oposto.'}
+],
+'2-4':[
+  {t:'Entendo 🙂 desejo tudo de bom pra você.',tip:'Sete palavras que dizem: "eu não preciso de você pra estar bem". Quando ele está com outra e recebe isso, o contraste é avassalador.'},
+  {t:'Tudo certo! Fica bem, viu? 💛',tip:'Brevidade é poder. Ele esperava cobrança, ciúme, drama. Recebeu paz. Isso vai ecoar na cabeça dele por dias.'},
+  {t:'Sem problema. A vida é de cada um, né? Te desejo o melhor.',tip:'Maturidade absoluta. Quando ele comparar sua reação com o que a outra faria na mesma situação, você ganha pontos sem fazer nada.'}
+],
+'3-0':[
+  {t:'[Por outra plataforma/email] Oi! Sei que bloqueou e respeito. Mas queria só te dizer que não tenho ressentimento nenhum. Fica bem 🙂',tip:'Via outra plataforma (email, recado por amigo). Uma única mensagem, sem insistir. Mostra maturidade. Se ele não responder, NÃO mande outra.'},
+  {t:'[Recado via amigo em comum] Pede pro [amigo] dizer que você deseja o melhor pra ele, sem drama.',tip:'Recado por terceiro é menos invasivo que mensagem direta. Ele recebe a informação sem a pressão de responder.'},
+  {t:'[Email ou carta] Sei que precisa de espaço. Só quero que saiba que, quando estiver pronto, a porta tá aberta pra uma conversa civilizada.',tip:'Uma única tentativa. Se ele bloqueou, a melhor quebra de gelo é demonstrar que você entende o motivo e respeita.'}
+],
+'3-1':[
+  {t:'[Outra plataforma] Ei, não quero invadir seu espaço. Só queria te pedir desculpa por [algo específico]. Só isso. Fica bem.',tip:'Pedido de desculpa específico + respeito ao espaço. Uma mensagem. Se ele quiser retomar, ele vai procurar.'},
+  {t:'[Email] Oi, sei que cortou contato e tudo bem. Passei por muita coisa e cresci. Se um dia quiser conversar, estou aberta a isso.',tip:'Demonstra evolução. Uma única mensagem. Deixe o tempo fazer o resto — bloqueios quase sempre são emocionais e temporários.'},
+  {t:'[Via amigo] "Diz pra ele que eu entendo e que tá tudo bem da minha parte."',tip:'Mensagem curta via terceiro. Zero drama, zero insistência. Ele vai saber que você está em paz — e isso incomoda mais do que mil tentativas.'}
+],
+'3-2':[
+  {t:'[Story/rede social — sem marcar ele] Poste sobre algo incrível que você está fazendo.',tip:'Se ele te bloqueou no WhatsApp mas te segue em outra rede, a melhor mensagem é sua vida acontecendo. Sem indiretas, sem tristeza.'},
+  {t:'[Outra plataforma] Ei! Acabou de acontecer [algo inusitado]. Lembrei de você porque [conexão com memória]. Enfim, espero que esteja bem!',tip:'Se conseguir contato por outra via, uma mensagem leve e curiosa. Não mencione o bloqueio. Aja como se nada tivesse acontecido.'},
+  {t:'Viva sua vida de forma visível. Ele vai saber. As pessoas sempre sabem.',tip:'Às vezes a melhor mensagem é nenhuma mensagem direta. Sua evolução visível é a mensagem mais poderosa que existe.'}
+],
+'3-3':[
+  {t:'[Via amigo em comum] "A gente vai fazer [programa]. Se ele quiser aparecer, é bem-vindo."',tip:'Convite em grupo via terceiro. Zero pressão, zero constrangimento. Ele pode ir sem sentir que está cedendo.'},
+  {t:'[Outra plataforma, após ele desbloquear ou interagir] Oi! Topa tomar um café rápido? 15 minutos, sem drama 🙂',tip:'Só use DEPOIS de sinais de abertura. "15 minutos" e "sem drama" reduzem o risco percebido a quase zero.'},
+  {t:'[Se ele voltar a seguir/interagir] Ei, bom te ver por aqui 😊 Bora colocar o papo em dia?',tip:'Quando ele desbloqueia ou interage, é sinal verde. Seja rápida mas leve. Não mencione o período de bloqueio.'}
+],
+'3-4':[
+  {t:'Entendi. Respeito seu espaço. Se mudar de ideia, sabe onde me encontrar 💛',tip:'Se ele responde frio mesmo após você fazer contato por outra via, recue. Essa resposta é perfeita: digna, madura, sem insistência.'},
+  {t:'Tudo bem, sem problema nenhum. Cuida-se!',tip:'Encerra o ciclo com classe. Agora é silêncio total da sua parte. O silêncio após essa mensagem é onde a mágica acontece.'},
+  {t:'Ok 🙂 Te desejo tudo de bom.',tip:'Cinco palavras. Zero drama. Ele bloqueou esperando explosão emocional. Receber paz é a melhor forma de fazer ele repensar.'}
+],
+'4-0':[
+  {t:'Ei, sei que ontem foi pesado. Mas sabe o que eu lembrei hoje? [memória boa juntos]. Acho que a gente é mais do que uma briga.',tip:'Após uma briga, a primeira mensagem define o tom. Trazer uma memória positiva redireciona o foco para o que funciona, não para o que quebrou.'},
+  {t:'Bom dia 🙂 Não vou falar da briga. Só quero que saiba que me importo com você.',tip:'Ele espera continuação do conflito. Receber carinho é um curto-circuito emocional que desarma completamente.'},
+  {t:'Oi! Tava pensando e acho que a gente merece um reset. Que tal a gente fingir que é segunda-feira? 😂',tip:'Humor + proposta de recomeço. "Fingir que é segunda-feira" é engraçado e mostra que você não quer ficar remoendo.'}
+],
+'4-1':[
+  {t:'Oi. Eu pensei muito no que aconteceu. Não quero que a gente se perca por causa de uma briga. Podemos conversar quando você estiver pronto?',tip:'Vulnerabilidade + respeito ao tempo dele. "Quando você estiver pronto" mostra que você não está impondo — está oferecendo.'},
+  {t:'Ei, sei que os dois disseram coisas que não queriam. Da minha parte, sinto muito pelo que te magoou. Quero resolver isso com você.',tip:'Assumir sua parte (sem se culpar por tudo) é o primeiro passo. "Com você" mostra parceria, não confronto.'},
+  {t:'Não quero que isso fique parado entre a gente. Tô aberta pra conversar quando fizer sentido pra você 💛',tip:'Mostra iniciativa sem invadir. "Quando fizer sentido pra você" respeita o processo dele e reduz a resistência.'}
+],
+'4-2':[
+  {t:'Sabe, depois daquela briga eu percebi umas coisas sobre mim que eu não via. Tô num processo legal de autoconhecimento.',tip:'Evolução pós-briga é irresistível. Ele vai querer saber o que você descobriu — e a curiosidade puxa a conversa de volta.'},
+  {t:'Uma amiga me indicou um livro/podcast sobre comunicação e tá mudando minha cabeça. Acho que você ia gostar também.',tip:'Compartilhar algo que mostra crescimento + convidar ele pro seu mundo novo. Sutil e poderoso.'},
+  {t:'Aconteceu uma coisa muito boa comigo hoje. Queria te contar, mas só se você quiser ouvir 😊',tip:'Gera curiosidade + dá poder de escolha a ele. Ele vai dizer sim porque humanos não resistem a uma boa notícia misteriosa.'}
+],
+'4-3':[
+  {t:'Ei, vamos deixar aquilo pra lá e fazer algo bom? Topa [café/sorvete/passeio] comigo?',tip:'Propor um programa leve logo após a briga mostra que você prioriza a relação sobre o ego. Escolha algo casual e público.'},
+  {t:'Acho que a gente precisa rir junto. Vem comigo no [lugar/atividade]? Prometo que não vou tocar no assunto 😂',tip:'"Prometo que não vou tocar no assunto" é exatamente o que ele precisa ouvir pra aceitar. E quando vocês estiverem juntos, rindo, o assunto perde força sozinho.'},
+  {t:'Eu te devo um café de desculpas. Quando posso pagar? 🙂',tip:'Leve, concreto, com um toque de humor. "Café de desculpas" é um conceito fofo que transforma tensão em leveza.'}
+],
+'4-4':[
+  {t:'Entendo que precisa de tempo. Tô aqui quando quiser conversar 💛',tip:'Respeito + disponibilidade. Se ele ainda está frio após a briga, não empurre. Essa mensagem faz o trabalho silenciosamente.'},
+  {t:'Ok, sem problema. Cada um no seu tempo. Só saiba que da minha parte tá tudo certo.',tip:'"Da minha parte tá tudo certo" libera ele da culpa. Culpa afasta. Liberdade atrai.'},
+  {t:'Tudo bem 🙂 Não vou insistir. Quando sentir vontade, é só chamar.',tip:'A frase "não vou insistir" seguida de silêncio real é uma das estratégias mais poderosas. Ele vai sentir falta da sua presença quando parar de ter pressão.'}
+],
+'5-0':[
+  {t:'Oi!! Que bom te ouvir 😊 Tava com saudade dessa conversa.',tip:'Ele voltou! Não esconda a alegria, mas não exagere. "Tava com saudade dessa conversa" é sobre a interação, não sobre ele — sutil mas importante.'},
+  {t:'Ei, que surpresa boa! Como você tá? Me conta as novidades 😄',tip:'Entusiasmo genuíno + interesse na vida dele. Faça ele falar — quem fala se conecta, quem ouve controla.'},
+  {t:'Opa! Achei que tinha sumido do mapa 😂 Fico feliz em falar com você.',tip:'Humor leve sobre o sumiço sem cobrar. "Fico feliz" é direto e honesto sem ser dramático.'}
+],
+'5-1':[
+  {t:'Ei, é tão bom ouvir de você! A gente podia voltar a conversar mais. Senti falta disso.',tip:'Ele respondeu depois de um tempo — aproveite pra reestabelecer o canal. "Senti falta disso" (da conversa, não dele) é seguro e eficaz.'},
+  {t:'Oi!! Que saudade 😊 Vamos colocar o papo em dia? Tanta coisa aconteceu!',tip:'Energia positiva + convite pra atualizar. "Tanta coisa aconteceu" gera curiosidade sobre sua vida — ele vai querer saber.'},
+  {t:'Que bom que apareceu! Tava querendo te contar uma coisa. Posso? 🙂',tip:'Gancho de curiosidade imediato. Ele acabou de voltar e já tem motivo pra continuar a conversa.'}
+],
+'5-2':[
+  {t:'Ei, sabia que [novidade sobre você/algo interessante]? Achei que ia gostar de saber 😄',tip:'Agora que ele voltou, mostre a versão atualizada de você. Evolução é a cola da reconquista.'},
+  {t:'Tô numa fase tão boa! Depois te conto tudo. Mas primeiro: como VOCÊ tá?',tip:'Mostra que você está bem + interesse genuíno nele. O equilíbrio perfeito entre atratividade e conexão.'},
+  {t:'Aconteceu uma coisa que vai te surpreender. Mas tô guardando pra contar pessoalmente 😏',tip:'Mistério + convite implícito pra encontro. Ele não vai aguentar esperar — e é exatamente essa a ideia.'}
+],
+'5-3':[
+  {t:'Que bom falar com você! Ei, bora tomar um café e colocar o papo em dia? 😊',tip:'Ele voltou = abertura. Não perca a janela. Propor encontro casual enquanto a energia está boa é estratégico.'},
+  {t:'Tô indo no [lugar legal] essa semana. Vem comigo? Vai ser divertido!',tip:'Aproveite o momento de reconexão pra propor algo presencial. "Vai ser divertido" é mais atrativo que "precisamos conversar".'},
+  {t:'Sabe o que eu quero fazer? Ir naquele [lugar que iam juntos]. Topa me acompanhar? 🙂',tip:'Memória afetiva + convite. O lugar carrega emoções que você não precisa verbalizar — o ambiente faz o trabalho.'}
+],
+'5-4':[
+  {t:'Sem problema, cada um no seu ritmo 🙂 Fico feliz que respondeu!',tip:'Se ele voltou mas está frio, não entre em pânico. Ele testou as águas. Sua resposta leve mostra que é seguro se aproximar.'},
+  {t:'De boa! Só de falar com você já fico feliz. Bora no seu tempo 💛',tip:'Zero pressão + positividade. Ele precisa sentir que voltar é seguro, não que é uma armadilha emocional.'},
+  {t:'Entendo! Estou por aqui. Quando quiser puxar assunto, vou adorar 😊',tip:'Porta aberta sem empurrar. Ele sabe que pode voltar a qualquer momento sem julgamento — e isso é irresistível.'}
+]
+};
 function gerarMsg(){
-  if(selSit==null || selObj==null){ return; }
-  // As sugestões de mensagem serão preenchidas com o banco de mensagens do produto.
-  $('#gen-out').innerHTML = '<div class="soon-box" style="margin-top:4px"><div class="si">✨</div>'+
-    '<h2>Sugestões a caminho</h2><p>Situação: <b>'+esc(SITUACOES[selSit])+'</b><br>Objetivo: <b>'+esc(OBJETIVOS[selObj])+'</b><br><br>O banco de mensagens estratégicas será liberado aqui.</p>'+
-    '<div class="soon-tag">Em breve</div></div>';
+  if(selSit==null || selObj==null) return;
+  var key = selSit+'-'+selObj;
+  var arr = MSGS[key];
+  if(!arr||!arr.length){
+    $('#gen-out').innerHTML='<div class="msg-aviso">Combinação sem sugestões ainda. Tente outra situação ou objetivo.</div>';
+    return;
+  }
+  var html='<div class="msg-result-hdr">✨ Suas sugestões</div>';
+  arr.forEach(function(m,i){
+    html+='<div class="msg-card"><button class="msg-copy" onclick="copyMsg(this,'+selSit+','+selObj+','+i+')" title="Copiar">📋</button>'+
+      '<div class="msg-tag">Opção '+(i+1)+'</div>'+
+      '<div class="msg-txt">'+esc(m.t)+'</div>'+
+      '<div class="msg-tip">💡 '+esc(m.tip)+'</div></div>';
+  });
+  html+='<div class="msg-aviso">⚠️ Adapte a mensagem para o seu contexto. Use suas palavras e seu jeito — a autenticidade é mais poderosa que qualquer script.</div>';
+  $('#gen-out').innerHTML=html;
   $('#gen-out').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+function copyMsg(btn,s,o,i){
+  var txt=MSGS[s+'-'+o][i].t;
+  navigator.clipboard.writeText(txt).then(function(){
+    btn.innerHTML='✓';btn.classList.add('copied');
+    setTimeout(function(){btn.innerHTML='📋';btn.classList.remove('copied');},1500);
+  });
 }
 
 /* ----- planner (14 dias a partir de hoje) ----- */
