@@ -542,36 +542,52 @@
 
       <!-- mensagens / biblioteca -->
       <div class="ftab" id="ft-mensagens">
-        <div style="background:linear-gradient(135deg,#ec3a8b,#a855f7);border-radius:18px;padding:28px 22px;margin-bottom:18px">
-          <div style="font-size:32px;margin-bottom:6px">📚</div>
-          <h3 style="color:#fff;font-size:19px;font-weight:800;margin:0 0 4px">Biblioteca das Respostas</h3>
-          <p style="color:rgba(255,255,255,.85);font-size:13px;margin:0">A resposta exata pra mais de 40 situações reais</p>
+        <!-- LOCKED: página de vendas -->
+        <div id="biblio-locked">
+          <div style="background:linear-gradient(135deg,#ec3a8b,#a855f7);border-radius:18px;padding:28px 22px;margin-bottom:18px">
+            <div style="font-size:32px;margin-bottom:6px">📚</div>
+            <h3 style="color:#fff;font-size:19px;font-weight:800;margin:0 0 4px">Biblioteca das Respostas</h3>
+            <p style="color:rgba(255,255,255,.85);font-size:13px;margin:0">A resposta exata pra mais de 40 situações reais</p>
+          </div>
+          <div style="background:#fff;border-radius:16px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+            <p style="font-size:15px;font-weight:700;color:#1a1a2e;line-height:1.5;margin:0 0 12px"><strong>Você sabe o que fazer. Mas na hora H, as palavras travam.</strong></p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px">Ele mandou uma mensagem de madrugada. Ele respondeu frio depois de dias. Ele falou que "precisa de espaço". Você fica paralisada sem saber o que digitar.</p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 16px">A Biblioteca das Respostas resolve isso. <strong>Você abre, acha a situação, usa o texto exato.</strong> Sem improvisar. Sem arriscar errar na hora mais importante.</p>
+            <p style="font-size:14px;font-weight:700;color:#1a1a2e;margin:0 0 10px">Situações cobertas:</p>
+            <ul style="font-size:13.5px;color:#444;line-height:1.8;padding-left:16px;margin:0">
+              <li><strong>Primeiro contato</strong> depois de semanas de silêncio</li>
+              <li><strong>Quando ele responde com frieza</strong> ou monossílabos</li>
+              <li><strong>Quando ele some</strong> no meio da conversa</li>
+              <li><strong>Quando ele manda mensagem de madrugada</strong></li>
+              <li><strong>Reencontro</strong> — o que falar pessoalmente</li>
+              <li><strong>Quando ele diz que "não sabe o que quer"</strong></li>
+              <li><strong>Quando ele está com outra</strong> mas ainda te contata</li>
+              <li><strong>+ 33 situações</strong> adicionais</li>
+            </ul>
+          </div>
+          <div style="background:#fdf2f8;border-radius:16px;padding:22px;margin-bottom:18px;border-left:4px solid #ec3a8b">
+            <p style="font-size:15px;font-weight:700;color:#d6246e;margin:0 0 10px">Por que funciona?</p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 10px">Cada resposta foi construída com base no comportamento masculino durante o afastamento. <strong>Não é sobre manipulação — é sobre falar a língua emocional certa no momento certo.</strong></p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0">O que você diz nas próximas 24 horas pode determinar o rumo de tudo. A Biblioteca garante que você não vai errar por falta de opção.</p>
+          </div>
+          <a href="https://checkout.payt.com.br/c90285f2b119feb2d712e57c15cb4fd2" target="_blank" class="btn-grad" style="display:block;width:100%;padding:16px;font-size:15px;border-radius:14px;text-align:center;text-decoration:none;box-sizing:border-box">Acessar a Biblioteca Completa →</a>
         </div>
 
-        <div style="background:#fff;border-radius:16px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
-          <p style="font-size:15px;font-weight:700;color:#1a1a2e;line-height:1.5;margin:0 0 12px"><strong>Você sabe o que fazer. Mas na hora H, as palavras travam.</strong></p>
-          <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px">Ele mandou uma mensagem de madrugada. Ele respondeu frio depois de dias. Ele falou que "precisa de espaço". Você fica paralisada sem saber o que digitar.</p>
-          <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 16px">A Biblioteca das Respostas resolve isso. <strong>Você abre, acha a situação, usa o texto exato.</strong> Sem improvisar. Sem arriscar errar na hora mais importante.</p>
-          <p style="font-size:14px;font-weight:700;color:#1a1a2e;margin:0 0 10px">Situações cobertas:</p>
-          <ul style="font-size:13.5px;color:#444;line-height:1.8;padding-left:16px;margin:0">
-            <li><strong>Primeiro contato</strong> depois de semanas de silêncio</li>
-            <li><strong>Quando ele responde com frieza</strong> ou monossílabos</li>
-            <li><strong>Quando ele some</strong> no meio da conversa</li>
-            <li><strong>Quando ele manda mensagem de madrugada</strong></li>
-            <li><strong>Reencontro</strong> — o que falar pessoalmente</li>
-            <li><strong>Quando ele diz que "não sabe o que quer"</strong></li>
-            <li><strong>Quando ele está com outra</strong> mas ainda te contata</li>
-            <li><strong>+ 33 situações</strong> adicionais</li>
-          </ul>
+        <!-- UNLOCKED: conteúdo real -->
+        <div id="biblio-unlocked" style="display:none">
+          <div style="background:linear-gradient(135deg,#a855f7,#7c3aed);border-radius:18px;padding:28px 22px;margin-bottom:18px">
+            <div style="font-size:32px;margin-bottom:6px">📚</div>
+            <h3 style="color:#fff;font-size:19px;font-weight:800;margin:0 0 4px">Biblioteca das Respostas</h3>
+            <p style="color:rgba(255,255,255,.85);font-size:13px;margin:0">✅ Desbloqueada — escolha sua situação abaixo</p>
+          </div>
+          <p class="tool-intro">Selecione sua situação e objetivo para receber sugestões estratégicas.</p>
+          <div class="sec-lbl">Situação atual</div>
+          <div class="opt-grid" id="sit-grid"></div>
+          <div class="sec-lbl">Objetivo</div>
+          <div class="opt-grid" id="obj-grid"></div>
+          <button class="gen-btn" id="gen-btn" onclick="gerarMsg()">✨ Gerar sugestões</button>
+          <div class="gen-out" id="gen-out"></div>
         </div>
-
-        <div style="background:#fdf2f8;border-radius:16px;padding:22px;margin-bottom:18px;border-left:4px solid #ec3a8b">
-          <p style="font-size:15px;font-weight:700;color:#d6246e;margin:0 0 10px">Por que funciona?</p>
-          <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 10px">Cada resposta foi construída com base no comportamento masculino durante o afastamento. <strong>Não é sobre manipulação — é sobre falar a língua emocional certa no momento certo.</strong></p>
-          <p style="font-size:14px;color:#444;line-height:1.6;margin:0">O que você diz nas próximas 24 horas pode determinar o rumo de tudo. A Biblioteca garante que você não vai errar por falta de opção.</p>
-        </div>
-
-        <button class="btn-grad" style="width:100%;padding:16px;font-size:15px;border-radius:14px" onclick="openSoon('Biblioteca das Respostas','Biblioteca completa de respostas por situação.')">Acessar a Biblioteca Completa →</button>
       </div>
 
       <!-- planner -->
@@ -1182,6 +1198,13 @@ function ftab(name){
   $all('.subtab').forEach(function(t){ t.classList.toggle('on', t.dataset.ft===name); });
   $all('.ftab').forEach(function(t){ t.classList.remove('on'); });
   $('#ft-'+name).classList.add('on');
+  if(name==='mensagens') updateBiblioState();
+}
+function updateBiblioState(){
+  var open = biblioDesbloqueada();
+  $('#biblio-locked').style.display = open ? 'none' : 'block';
+  $('#biblio-unlocked').style.display = open ? 'block' : 'none';
+  if(open) renderMsgOpts();
 }
 
 /* ----- mensagens ----- */
@@ -1458,7 +1481,24 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
       bootApp(s.nome);
     }
   }
+  // unlock extras via URL (?unlock=biblioteca&email=x&key=y)
+  var params = new URLSearchParams(location.search);
+  if (params.get('unlock') === 'biblioteca' && params.get('key')){
+    var unlockEmail = (params.get('email')||'').toLowerCase();
+    var unlockKey = params.get('key');
+    localStorage.setItem('crm_biblio', JSON.stringify({email:unlockEmail, key:unlockKey}));
+    history.replaceState(null, '', location.pathname);
+  }
 })();
+
+function biblioDesbloqueada(){
+  try{
+    var b = JSON.parse(localStorage.getItem('crm_biblio')||'null');
+    if(!b) return false;
+    if(session && session.email && b.email !== session.email.toLowerCase()) return false;
+    return true;
+  }catch(e){ return false; }
+}
 </script>
 <script defer src="/_vercel/insights/script.js"></script>
 <script defer src="/_vercel/speed-insights/script.js"></script>
