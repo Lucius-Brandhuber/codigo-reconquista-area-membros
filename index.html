@@ -813,7 +813,7 @@ var MODULOS = [
     {n:'2.5', tit:'Aula 2.5', yt:'GaBAONh6RpY', rec:{
       tit:'Biblioteca das Respostas',
       txt:'Você sabe o que fazer. Mas na hora H, as palavras travam.\nA Biblioteca das Respostas tem o texto exato pra mais de 40 situações reais — primeiro contato, reencontro, quando ele some, quando ele responde frio, quando ele manda mensagem de madrugada.\nVocê abre, acha a situação, usa o texto. Sem improvisar.',
-      soon:'Biblioteca completa de respostas por situação.'
+      url:'https://checkout.payt.com.br/c90285f2b119feb2d712e57c15cb4fd2'
     }}
   ]},
   {id:'m3', em:'🔍', lbl:'Módulo 3', t:'Casos Específicos e Diferentes', d:'O que fazer em situações fora do comum.', aulas:[
@@ -823,7 +823,7 @@ var MODULOS = [
     {n:'3.4', tit:'Aula 3.4', yt:'yk8UMc6SQhg', rec:{
       tit:'Biblioteca das Respostas',
       txt:'Cada situação que eu mostrei nessa aula tem um script específico lá dentro.\nNão improvisa. Não arrisca errar na hora mais importante.',
-      soon:'Biblioteca completa de respostas por situação.'
+      url:'https://checkout.payt.com.br/c90285f2b119feb2d712e57c15cb4fd2'
     }}
   ]},
   {id:'m4', em:'💗', lbl:'Módulo 4', t:'A Volta Dele', d:'Como agir quando ele voltar e não estragar tudo.', aulas:[
@@ -833,7 +833,7 @@ var MODULOS = [
     {n:'4.4', tit:'Aula 4.4', yt:'gyWr2Sy5qVY', rec:{
       tit:'Reconstrução da Confiança',
       txt:'Voltar com ele foi a parte difícil. Mas manter — essa é a parte que ninguém prepara você pra enfrentar.\nOs pensamentos que não param. O ciúme que aparece do nada. A conversa sobre o passado que você não sabe como ter.\nReconstrução da Confiança é o método que cura o relacionamento por dentro — depois que a reconciliação aconteceu.',
-      soon:'Método completo de reconstrução da confiança pós-reconciliação.'
+      url:'https://checkout.payt.com.br/c/RK9QP8'
     }}
   ]},
   {id:'m5', em:'💬', lbl:'Módulo 5', t:'Comunicação Saudável', d:'Aprenda a se comunicar de forma que gera conexão real.', aulas:[
@@ -1401,7 +1401,8 @@ function openAula(modI, aulaI){
     $('#aula-rec-txt').innerHTML=esc(a.rec.txt).replace(/\n/g,'<br>');
     var rb=$('#aula-rec-btn');
     rb.textContent=a.rec.cta||'Acessar agora →';
-    rb.onclick=function(){ openSoon(a.rec.tit, a.rec.soon||''); };
+    if(a.rec.url){ rb.onclick=function(){ window.open(a.rec.url,'_blank','noopener'); }; }
+    else{ rb.onclick=function(){ openSoon(a.rec.tit, a.rec.soon||''); }; }
     rc.style.display='';
   }else{ rc.style.display='none'; }
   renderDoneBtn();
