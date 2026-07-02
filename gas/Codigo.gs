@@ -18,7 +18,12 @@
 
 var DB_NAME = 'Reconquista — Membros DB';
 var SHEET   = 'usuarios';
-var HEADERS = ['email','nome','salt','hash','token','criado_em','atualizado_em','dados'];
+var HEADERS = ['email','nome','salt','hash','token','criado_em','atualizado_em','dados','reset_hash','reset_exp'];
+
+// URL da área de membros (usada no link de redefinição de senha).
+var MEMBROS_URL = 'https://area-membros-reconquista.vercel.app';
+// Quanto tempo o link de redefinição fica válido (1 hora).
+var RESET_TTL_MS = 60 * 60 * 1000;
 
 /* (opcional) Só deixar criar conta quem comprou: cole aqui os e-mails de
    compradores (minúsculos), OU deixe vazio para liberar qualquer e-mail. */
@@ -40,6 +45,9 @@ function sheet(){
   if (sh.getLastRow() === 0){
     sh.getRange(1,1,1,HEADERS.length).setValues([HEADERS]);
     sh.setFrozenRows(1);
+  } else if (sh.getLastColumn() < HEADERS.length){
+    // migração: acrescenta as colunas novas (reset_hash/reset_exp) ao cabeçalho
+    sh.getRange(1,1,1,HEADERS.length).setValues([HEADERS]);
   }
   return sh;
 }
@@ -52,11 +60,13 @@ function doPost(e){
   try{
     var b = JSON.parse((e && e.postData && e.postData.contents) || '{}');
     switch (b.action){
-      case 'register': return json(register(b));
-      case 'login':    return json(login(b));
-      case 'save':     return json(saveData(b));
-      case 'load':     return json(loadData(b));
-      default:         return json({ ok:false, error:'Ação inválida.' });
+      case 'register':      return json(register(b));
+      case 'login':         return json(login(b));
+      case 'save':          return json(saveData(b));
+      case 'load':          return json(loadData(b));
+      case 'reset_request': return json(resetRequest(b));
+      case 'reset_confirm': return json(resetConfirm(b));
+      default:              return json({ ok:false, error:'Ação inválida.' });
     }
   }catch(err){
     return json({ ok:false, error:String(err) });
@@ -115,6 +125,74 @@ function loadData(b){
   return { ok:true, nome:f.data.nome, dados:parse(f.data.dados) };
 }
 
+/* ---- Esqueci minha senha: pedir link ---- */
+function resetRequest(b){
+  var email = norm(b.email);
+  if (!emailOk(email)) return { ok:false, error:'E-mail inválido.' };
+  // Sempre respondemos ok (não revelamos se o e-mail existe). Só enviamos se existir.
+  var f = findRow(email);
+  if (f.row > 0){
+    var lock = LockService.getScriptLock(); lock.waitLock(8000);
+    try{
+      var code = Utilities.getUuid().replace(/-/g,'');   // token cru (vai no link)
+      var sh = sheet();
+      sh.getRange(f.row, col('reset_hash')).setValue(sha256(code));  // guardamos só o hash
+      sh.getRange(f.row, col('reset_exp')).setValue(Date.now() + RESET_TTL_MS);
+    } finally { lock.releaseLock(); }
+    try { sendResetEmail(email, f.data.nome, code); } catch(err){}
+  }
+  return { ok:true };
+}
+
+/* ---- Esqueci minha senha: definir nova senha (a partir do link) ---- */
+function resetConfirm(b){
+  var email = norm(b.email), code = String(b.code||''), senha = String(b.senha||'');
+  if (senha.length < 6) return { ok:false, error:'A senha precisa ter ao menos 6 caracteres.' };
+  var f = findRow(email);
+  if (f.row < 0) return { ok:false, error:'Link inválido.' };
+  if (!f.data.reset_hash || sha256(code) !== String(f.data.reset_hash))
+    return { ok:false, error:'Link inválido ou já utilizado. Peça um novo.' };
+  if (!f.data.reset_exp || Date.now() > Number(f.data.reset_exp))
+    return { ok:false, error:'O link expirou. Peça um novo.' };
+
+  var lock = LockService.getScriptLock(); lock.waitLock(8000);
+  try{
+    var salt  = Utilities.getUuid();
+    var token = Utilities.getUuid();
+    var sh = sheet();
+    sh.getRange(f.row, col('salt')).setValue(salt);
+    sh.getRange(f.row, col('hash')).setValue(sha256(salt+'|'+senha));
+    sh.getRange(f.row, col('token')).setValue(token);         // desloga sessões antigas
+    sh.getRange(f.row, col('reset_hash')).setValue('');       // consome o link
+    sh.getRange(f.row, col('reset_exp')).setValue('');
+    sh.getRange(f.row, col('atualizado_em')).setValue(Date.now());
+    return { ok:true, nome:f.data.nome, token:token, dados:parse(f.data.dados) };
+  } finally { lock.releaseLock(); }
+}
+
+function sendResetEmail(email, nome, code){
+  var primeiro = String(nome||'aluna').split(' ')[0];
+  var link = MEMBROS_URL + '?reset=1&email=' + encodeURIComponent(email) + '&code=' + code;
+  var subject = '🔑 Redefinir sua senha — Código da Reconquista Magnética';
+  var html = '<!DOCTYPE html><html><body style="margin:0;padding:0;background:#f7f1f4;font-family:Arial,sans-serif">'
+    + '<div style="max-width:520px;margin:30px auto;background:#fff;border-radius:20px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">'
+    + '<div style="background:linear-gradient(135deg,#ec3a8b,#a855f7);padding:36px 28px;text-align:center;color:#fff">'
+    + '<div style="font-size:42px;margin-bottom:8px">🔑</div>'
+    + '<h1 style="margin:0;font-size:22px">Oi, ' + primeiro + '</h1>'
+    + '<p style="margin:8px 0 0;font-size:14px;opacity:.9">Recebemos um pedido para redefinir sua senha</p>'
+    + '</div>'
+    + '<div style="padding:28px">'
+    + '<p style="font-size:15px;color:#333;line-height:1.6">Clique no botão abaixo para criar uma nova senha. Este link vale por <strong>1 hora</strong>.</p>'
+    + '<div style="text-align:center;margin:24px 0">'
+    + '<a href="' + link + '" style="display:inline-block;background:linear-gradient(135deg,#ec3a8b,#d6246e);color:#fff;text-decoration:none;padding:14px 36px;border-radius:12px;font-size:16px;font-weight:700">Criar nova senha →</a>'
+    + '</div>'
+    + '<p style="font-size:13px;color:#888;line-height:1.5">Se você não pediu isso, pode ignorar este e-mail — sua senha atual continua valendo.</p>'
+    + '<hr style="border:none;border-top:1px solid #eee;margin:20px 0">'
+    + '<p style="font-size:12px;color:#aaa;text-align:center">Código da Reconquista Magnética<br>Qualquer dúvida, responda este e-mail.</p>'
+    + '</div></div></body></html>';
+  MailApp.sendEmail(email, subject, 'Redefinir sua senha: ' + link, { htmlBody: html, name: 'Código da Reconquista Magnética' });
+}
+
 /* ====================== HELPERS ====================== */
 function findRow(email){
   var sh = sheet();
@@ -144,6 +222,7 @@ function json(obj){
 /* ====================== SETUP / TESTE ====================== */
 function autorizar(){
   sheet(); // cria a planilha e pede acesso ao Drive/Sheets
+  MailApp.getRemainingDailyQuota(); // pede o escopo de envio de e-mail (redefinir senha)
   Logger.log('OK — planilha: ' + getSS().getUrl());
 }
 function testeRapido(){

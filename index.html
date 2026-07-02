@@ -385,6 +385,7 @@
           <input type="checkbox" id="li-remember" checked style="accent-color:var(--pink);width:16px;height:16px;cursor:pointer"> Lembrar de mim
         </label>
         <button class="btn-grad" type="button" id="li-btn" onclick="doLogin()">Entrar →</button>
+        <p class="auth-hint" style="text-align:center;margin-top:12px;cursor:pointer;text-decoration:underline" onclick="showForgot()">Esqueci minha senha</p>
       </form>
 
       <!-- REGISTRO -->
@@ -394,6 +395,26 @@
         <div class="field"><input id="rg-pass" type="password" placeholder="Crie uma senha (mín. 6 caracteres)" autocomplete="new-password"></div>
         <div class="auth-err" id="rg-err"></div>
         <button class="btn-grad" type="button" id="rg-btn" onclick="doRegister()">Criar minha conta →</button>
+      </form>
+
+      <!-- ESQUECI MINHA SENHA (pedir link) -->
+      <form class="auth-pane" id="pane-forgot" onsubmit="doResetRequest(event);return false;">
+        <p style="font-size:13px;color:var(--muted);margin:0 0 14px;line-height:1.5;text-align:left">Digite o e-mail da sua conta. Vamos te enviar um link para criar uma nova senha.</p>
+        <div class="field"><input id="fg-mail" type="email" placeholder="E-mail da sua conta" autocomplete="email"></div>
+        <div class="auth-err" id="fg-err"></div>
+        <div id="fg-ok" style="display:none;font-size:13px;color:#0a8a4a;margin:2px 2px 12px;text-align:left;line-height:1.5"></div>
+        <button class="btn-grad" type="button" id="fg-btn" onclick="doResetRequest()">Enviar link →</button>
+        <p class="auth-hint" style="text-align:center;margin-top:14px;cursor:pointer;text-decoration:underline" onclick="authTab('login')">← Voltar para o login</p>
+      </form>
+
+      <!-- NOVA SENHA (após clicar no link do e-mail) -->
+      <form class="auth-pane" id="pane-reset" onsubmit="doResetConfirm(event);return false;">
+        <p style="font-size:13px;color:var(--muted);margin:0 0 14px;line-height:1.5;text-align:left">Crie uma nova senha para <b id="rs-mail-label" style="color:var(--ink)"></b>.</p>
+        <div class="field"><input id="rs-pass" type="password" placeholder="Nova senha (mín. 6 caracteres)" autocomplete="new-password"></div>
+        <div class="field"><input id="rs-pass2" type="password" placeholder="Repita a nova senha" autocomplete="new-password"></div>
+        <div class="auth-err" id="rs-err"></div>
+        <button class="btn-grad" type="button" id="rs-btn" onclick="doResetConfirm()">Salvar nova senha →</button>
+        <p class="auth-hint" style="text-align:center;margin-top:14px;cursor:pointer;text-decoration:underline" onclick="authTab('login')">← Voltar para o login</p>
       </form>
 
       <p class="auth-hint" id="auth-mode-hint"></p>
@@ -411,9 +432,14 @@
           <div class="hello-n">Oi, <span id="u-name">você</span> ✨</div>
           <div class="hello-s">Vamos ativar o Código hoje?</div>
         </div>
-        <button class="gear" onclick="openPerfil()" title="Perfil">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-        </button>
+        <div style="display:flex;gap:8px">
+          <a href="https://wa.link/1wuk7j" target="_blank" class="gear" title="Suporte" style="text-decoration:none">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          </a>
+          <button class="gear" onclick="openPerfil()" title="Perfil">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          </button>
+        </div>
       </div>
 
       <div class="hero">
@@ -807,11 +833,30 @@ var SERVER = GAS_AUTH && !/COLE_AQUI/.test(GAS_AUTH);
 var session = null; // {email, nome, token}
 
 function authTab(which){
+  var tabs=$('.auth-tabs'); if(tabs) tabs.style.display='flex';
   $('#tab-login').classList.toggle('on', which==='login');
   $('#tab-reg').classList.toggle('on', which==='reg');
   $('#pane-login').classList.toggle('on', which==='login');
   $('#pane-reg').classList.toggle('on', which==='reg');
+  $('#pane-forgot').classList.remove('on');
+  $('#pane-reset').classList.remove('on');
   $('#li-err').textContent=''; $('#rg-err').textContent='';
+}
+function showForgot(){
+  var tabs=$('.auth-tabs'); if(tabs) tabs.style.display='none';
+  ['login','reg','reset'].forEach(function(p){ $('#pane-'+p).classList.remove('on'); });
+  $('#pane-forgot').classList.add('on');
+  var m=$('#li-mail').value.trim(); if(m) $('#fg-mail').value=m;
+  $('#fg-err').textContent=''; $('#fg-ok').style.display='none';
+}
+function showReset(email, code){
+  var tabs=$('.auth-tabs'); if(tabs) tabs.style.display='none';
+  ['login','reg','forgot'].forEach(function(p){ $('#pane-'+p).classList.remove('on'); });
+  var pane=$('#pane-reset');
+  pane.dataset.email=email||''; pane.dataset.code=code||'';
+  $('#rs-mail-label').textContent=email||'';
+  $('#rs-err').textContent=''; $('#rs-pass').value=''; $('#rs-pass2').value='';
+  pane.classList.add('on');
 }
 function emailOk(m){ return /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(m); }
 
@@ -877,6 +922,51 @@ async function doLogin(ev){
     }
   }catch(e){ err.textContent='Erro de conexão. Tente de novo.'; return false; }
   finally{ setBusy('li', false); }
+  return false;
+}
+async function doResetRequest(ev){
+  if(ev) ev.preventDefault();
+  var mail=$('#fg-mail').value.trim().toLowerCase();
+  var err=$('#fg-err'); err.textContent=''; $('#fg-ok').style.display='none';
+  if(!emailOk(mail)){ err.textContent='Digite um e-mail válido.'; return false; }
+  setBusy('fg', true);
+  try{
+    if(SERVER){
+      await gas({action:'reset_request', email:mail});
+      $('#fg-ok').textContent='Se existir uma conta com esse e-mail, enviamos um link para criar uma nova senha. Confira sua caixa de entrada (e o spam).';
+      $('#fg-ok').style.display='block';
+    }else{
+      var u=localUsers();
+      if(u[mail]){ showReset(mail, 'LOCAL'); return false; }
+      err.textContent='E-mail não encontrado neste navegador.'; return false;
+    }
+  }catch(e){ err.textContent='Erro de conexão. Tente de novo.'; return false; }
+  finally{ setBusy('fg', false); }
+  return false;
+}
+async function doResetConfirm(ev){
+  if(ev) ev.preventDefault();
+  var pane=$('#pane-reset');
+  var email=(pane.dataset.email||'').toLowerCase(), code=pane.dataset.code||'';
+  var p1=$('#rs-pass').value, p2=$('#rs-pass2').value;
+  var err=$('#rs-err'); err.textContent='';
+  if(p1.length<6){ err.textContent='A senha precisa ter ao menos 6 caracteres.'; return false; }
+  if(p1!==p2){ err.textContent='As senhas não conferem.'; return false; }
+  setBusy('rs', true);
+  try{
+    if(SERVER){
+      var res = await gas({action:'reset_confirm', email:email, code:code, senha:p1});
+      if(!res.ok){ err.textContent=res.error||'Não foi possível redefinir. Peça um novo link.'; return false; }
+      history.replaceState(null,'',location.pathname);
+      startSession({email:email, nome:res.nome, token:res.token, _remember:true}, res.dados);
+    }else{
+      var u=localUsers(), rec=u[email];
+      if(!rec){ err.textContent='Conta não encontrada.'; return false; }
+      rec.hash=await sha256(email+'|'+p1); setLocalUsers(u);
+      startSession({email:email, nome:rec.nome, token:'local', _remember:true}, rec.dados);
+    }
+  }catch(e){ err.textContent='Erro de conexão. Tente de novo.'; return false; }
+  finally{ setBusy('rs', false); }
   return false;
 }
 function setBusy(p, on){
@@ -1289,8 +1379,10 @@ function updateBiblioState(){
 /* ----- mensagens ----- */
 var selSit=null, selObj=null;
 function renderMsgOpts(){
-  $('#sit-grid').innerHTML = SITUACOES.map(function(s,i){ return '<button class="opt" data-k="sit" data-i="'+i+'" onclick="pickOpt(this,\'sit\','+i+')">'+s+'</button>'; }).join('');
-  $('#obj-grid').innerHTML = OBJETIVOS.map(function(s,i){ return '<button class="opt" data-k="obj" data-i="'+i+'" onclick="pickOpt(this,\'obj\','+i+')">'+s+'</button>'; }).join('');
+  var sit=$('#sit-grid'), obj=$('#obj-grid');
+  if(!sit || !obj) return; // grids removidos no redesign da Biblioteca — evita quebrar o boot
+  sit.innerHTML = SITUACOES.map(function(s,i){ return '<button class="opt" data-k="sit" data-i="'+i+'" onclick="pickOpt(this,\'sit\','+i+')">'+s+'</button>'; }).join('');
+  obj.innerHTML = OBJETIVOS.map(function(s,i){ return '<button class="opt" data-k="obj" data-i="'+i+'" onclick="pickOpt(this,\'obj\','+i+')">'+s+'</button>'; }).join('');
 }
 function pickOpt(btn,k,i){
   document.querySelectorAll('.opt[data-k="'+k+'"]').forEach(function(o){ o.classList.remove('on'); });
@@ -1545,6 +1637,12 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
   $('#auth-mode-hint').textContent = SERVER
     ? 'Seus dados ficam salvos na sua conta e acompanham você em qualquer aparelho.'
     : '⚠️ Modo local (o backend ainda não foi configurado): as contas ficam só neste navegador.';
+  // redefinir senha via link do e-mail (?reset=1&email=x&code=y) — fica na tela de nova senha
+  var rparams = new URLSearchParams(location.search);
+  if(rparams.get('reset')==='1' && rparams.get('code') && rparams.get('email')){
+    showReset((rparams.get('email')||'').toLowerCase(), rparams.get('code'));
+    return;
+  }
   // restaura sessão
   var s=null; try{ s=JSON.parse(localStorage.getItem('crm_session')||sessionStorage.getItem('crm_session')||'null'); }catch(e){}
   if(s && s.email){
