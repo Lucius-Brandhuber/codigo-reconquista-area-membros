@@ -1642,7 +1642,10 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
 
 /* ============ INIT ============ */
 (function(){
-  renderModulos(); renderSintonias(); renderMsgOpts(); renderPlanner(); renderBonus();
+  // cada seção é isolada: se uma render falhar, as outras (ex.: Bônus) ainda aparecem
+  [renderModulos, renderSintonias, renderMsgOpts, renderPlanner, renderBonus].forEach(function(fn){
+    try{ fn(); }catch(e){ try{ console.error('render falhou:', e); }catch(_){} }
+  });
   ftab('emergencia');
   $('#auth-mode-hint').textContent = SERVER
     ? 'Seus dados ficam salvos na sua conta e acompanham você em qualquer aparelho.'
