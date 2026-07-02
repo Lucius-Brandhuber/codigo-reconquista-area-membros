@@ -977,6 +977,7 @@ function normData(d){
   d = (d && typeof d==='object') ? d : {};
   if(!Array.isArray(d.diario)) d.diario=[];
   if(!d.aulas || typeof d.aulas!=='object') d.aulas={};   // {'intro|0.1':true,...}
+  d.biblio = d.biblio === true;   // Biblioteca das Respostas desbloqueada (fica na conta, cross-device)
   return d;
 }
 function startSession(s, dados){
@@ -996,8 +997,19 @@ function bootApp(name){
   $('#gate').classList.add('hidden');
   $('#app').classList.remove('hidden');
   $('#u-name').textContent = String(name||'você').split(' ')[0];
+  ensureBiblioSynced();
   renderDiario();
   routeFromHash();
+}
+/* Se a Biblioteca foi desbloqueada por link neste aparelho (localStorage) mas
+   a conta no servidor ainda não sabe, grava na conta para valer em qualquer
+   aparelho. E se a conta já tem, garante o localStorage local. */
+function ensureBiblioSynced(){
+  if(!session || !session.email) return;
+  var mail = session.email.toLowerCase(), localOn=false;
+  try{ var b=JSON.parse(localStorage.getItem('crm_biblio')||'null'); localOn=!!(b && (b.email||'').toLowerCase()===mail); }catch(e){}
+  if(localOn && USERDATA.biblio!==true){ USERDATA.biblio=true; persist(); }
+  else if(USERDATA.biblio===true && !localOn){ localStorage.setItem('crm_biblio', JSON.stringify({email:mail, key:'server'})); }
 }
 function routeFromHash(){
   var h = (location.hash||'').replace('#','');
@@ -1665,10 +1677,15 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
     var unlockKey = params.get('key');
     localStorage.setItem('crm_biblio', JSON.stringify({email:unlockEmail, key:unlockKey}));
     history.replaceState(null, '', location.pathname);
+    // se já está logada com esse e-mail, grava na conta agora (vale em qualquer aparelho)
+    if(session && session.email && session.email.toLowerCase()===unlockEmail && USERDATA.biblio!==true){
+      USERDATA.biblio=true; persist(); updateBiblioState();
+    }
   }
 })();
 
 function biblioDesbloqueada(){
+  if(USERDATA && USERDATA.biblio === true) return true;   // desbloqueada na conta (cross-device)
   try{
     var b = JSON.parse(localStorage.getItem('crm_biblio')||'null');
     if(!b) return false;
