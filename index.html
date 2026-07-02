@@ -411,7 +411,7 @@
           <div class="hello-n">Oi, <span id="u-name">você</span> ✨</div>
           <div class="hello-s">Vamos ativar o Código hoje?</div>
         </div>
-        <button class="gear" onclick="sair()" title="Sair">
+        <button class="gear" onclick="openPerfil()" title="Perfil">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
         </button>
       </div>
@@ -632,6 +632,45 @@
       <div id="bonus-hero" class="emer-hero"></div>
       <div id="bonus-body"></div>
       <a class="btn-done" id="bonus-download" href="#" download style="text-decoration:none;text-align:center;">📥 Baixar PDF</a>
+    </section>
+
+    <!-- ---------- PERFIL ---------- -->
+    <section class="screen" id="s-perfil">
+      <button class="detail-back" onclick="go('home')">← Voltar</button>
+      <div class="page-h"><h1>Perfil</h1><p>Suas preferências e progresso</p></div>
+
+      <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06);display:flex;align-items:center;gap:16px">
+        <div style="width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#f3e8ff,#fce7f3);display:flex;align-items:center;justify-content:center;font-size:24px;flex:0 0 56px">✨</div>
+        <div>
+          <div id="perfil-nome" style="font-size:17px;font-weight:700;color:var(--ink)"></div>
+          <div style="font-size:13px;color:var(--muted)">Em reconquista</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Progresso geral</div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <span id="perfil-aulas" style="font-size:14px;color:var(--ink)">0 de 0 aulas</span>
+          <span id="perfil-pct" style="font-size:14px;font-weight:700;color:var(--pink)">0%</span>
+        </div>
+        <div style="height:6px;background:#f1eaf0;border-radius:99px;overflow:hidden">
+          <div id="perfil-bar" style="height:100%;background:linear-gradient(90deg,#ec3a8b,#a855f7);border-radius:99px;width:0%;transition:width .4s"></div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Seu nome</div>
+        <input id="perfil-nome-input" type="text" style="width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:12px;font-size:14px;color:var(--ink);box-sizing:border-box" onchange="updatePerfilNome(this.value)">
+      </div>
+
+      <div style="background:#fff;border-radius:16px;padding:20px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Entradas no diário</div>
+        <div id="perfil-diario-count" style="font-size:28px;font-weight:800;color:var(--pink)">0</div>
+        <div style="font-size:13px;color:var(--muted)">registros emocionais</div>
+      </div>
+
+      <button onclick="if(confirm('Tem certeza? Isso vai zerar todo o seu progresso de aulas e diário.')) resetProgresso()" style="width:100%;padding:14px;border:2px solid #e74c6f;border-radius:14px;background:transparent;color:#e74c6f;font-size:14px;font-weight:700;cursor:pointer;margin-bottom:14px">Redefinir progresso</button>
+      <button onclick="sair()" style="width:100%;padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer">Sair da conta</button>
     </section>
 
     <!-- ---------- DETALHE (em breve) ---------- -->
@@ -890,6 +929,38 @@ function go(view){
 }
 function openFerramenta(tab){ go('ferramentas'); ftab(tab); }
 function back(){ go(prev==='detail'?'home':prev); }
+function openPerfil(){
+  var totalAulas=0, doneAulas=0;
+  MODULOS.forEach(function(m){
+    aulasDe(m).forEach(function(a){
+      totalAulas++;
+      if(USERDATA.aulas && USERDATA.aulas[aulaKey(m.id,a.n)]) doneAulas++;
+    });
+  });
+  var pct = totalAulas ? Math.round(doneAulas/totalAulas*100) : 0;
+  var nome = session ? session.nome||'' : '';
+  $('#perfil-nome').textContent = nome;
+  $('#perfil-nome-input').value = nome;
+  $('#perfil-aulas').textContent = doneAulas + ' de ' + totalAulas + ' aulas';
+  $('#perfil-pct').textContent = pct + '%';
+  $('#perfil-bar').style.width = pct + '%';
+  $('#perfil-diario-count').textContent = USERDATA.diario ? USERDATA.diario.length : 0;
+  go('perfil');
+}
+function updatePerfilNome(v){
+  if(!session) return;
+  session.nome = v;
+  var store = localStorage.getItem('crm_session') ? localStorage : sessionStorage;
+  store.setItem('crm_session', JSON.stringify(session));
+  $('#u-name').textContent = v.split(' ')[0];
+  $('#perfil-nome').textContent = v;
+}
+function resetProgresso(){
+  USERDATA.aulas = {};
+  USERDATA.diario = [];
+  persist();
+  openPerfil();
+}
 function openSoon(title, desc){
   $('#d-title').textContent = title;
   $('#d-desc').textContent = desc || 'Este conteúdo será liberado em breve nesta área.';
