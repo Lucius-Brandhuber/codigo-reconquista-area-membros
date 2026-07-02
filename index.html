@@ -486,7 +486,7 @@
       <div class="fcard g-orange">
         <div class="ftop"><div class="fic">💔</div><h3>Reconstrução da Confiança</h3></div>
         <p>Uma solução exata pros pensamentos que não param, o ciúmes que você sente, as brigas todo dia. O método que cura o relacionamento por dentro.</p>
-        <button class="fbtn" onclick="openSoon('Reconstrução da Confiança','Programa de reconstrução da confiança no relacionamento.')">Acessar agora →</button>
+        <button class="fbtn" onclick="openReconstrucao()">Acessar agora →</button>
       </div>
     </section>
 
@@ -656,6 +656,46 @@
       <div id="bonus-hero" class="emer-hero"></div>
       <div id="bonus-body"></div>
       <a class="btn-done" id="bonus-download" href="#" download style="text-decoration:none;text-align:center;">📥 Baixar PDF</a>
+    </section>
+
+    <!-- ---------- RECONSTRUÇÃO DA CONFIANÇA ---------- -->
+    <section class="screen" id="s-reconstrucao">
+      <button class="detail-back" onclick="go('home')">← Voltar ao início</button>
+
+      <div class="emer-hero" style="background:linear-gradient(135deg,#f97316,#ec3a8b)">
+        <div class="emer-ico">❤️‍🩹</div>
+        <h2>Reconstrução da Confiança</h2>
+        <p>O método que cura o relacionamento por dentro</p>
+      </div>
+
+      <div style="background:#fff;border-radius:16px;padding:22px;margin-bottom:16px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+        <p style="font-size:16px;font-weight:800;color:#1a1a2e;line-height:1.45;margin:0 0 14px">Voltar com ele foi a parte difícil. Manter — essa é a parte que ninguém te prepara.</p>
+        <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px">Depois da reconciliação, aparecem os pensamentos que não param. O ciúme que surge do nada. A vontade de trazer o passado a toda hora. A briga que começa por nada e escala rápido.</p>
+        <p style="font-size:14.5px;font-weight:700;color:#1a1a2e;line-height:1.5;margin:0 0 4px">Isso não é fraqueza. É o relacionamento pedindo cura.</p>
+        <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 18px">E sem método, você vai reconquistar de novo — ou perder de vez.</p>
+
+        <p style="font-size:14.5px;font-weight:800;color:#1a1a2e;margin:0 0 10px">O que o método cobre:</p>
+        <div style="font-size:14px;color:#444;line-height:1.55">
+          <p style="margin:0 0 8px">• Como <strong>parar os pensamentos intrusivos</strong> sobre o passado</p>
+          <p style="margin:0 0 8px">• Como <strong>lidar com o ciúme</strong> sem gerar conflito</p>
+          <p style="margin:0 0 8px">• Como <strong>ter a conversa difícil</strong> sem explodir</p>
+          <p style="margin:0 0 8px">• Como <strong>reconstruir a confiança gradualmente</strong></p>
+          <p style="margin:0">• Como <strong>criar segurança emocional</strong> para os dois</p>
+        </div>
+      </div>
+
+      <div style="background:#fff8e9;border:1px solid #f5e3bd;border-radius:16px;padding:22px;margin-bottom:18px">
+        <p style="font-size:15px;font-weight:800;color:#e07b1f;margin:0 0 12px">Para quem é:</p>
+        <div style="font-size:14px;color:#3f3a33;line-height:1.5">
+          <p style="margin:0 0 9px">✅ Voltou com ele mas ainda sente insegurança</p>
+          <p style="margin:0 0 9px">✅ Brigas frequentes por coisas pequenas</p>
+          <p style="margin:0 0 9px">✅ Medo de que ele vá embora de novo</p>
+          <p style="margin:0 0 9px">✅ Dificuldade em confiar depois de traição ou abandono</p>
+          <p style="margin:0">✅ Quer construir um relacionamento sólido dessa vez</p>
+        </div>
+      </div>
+
+      <button class="btn-grad" id="reconstrucao-cta" style="width:100%;padding:16px;font-size:15px;border-radius:14px;box-sizing:border-box" onclick="acessarReconstrucao()">Acessar Reconstrução da Confiança →</button>
     </section>
 
     <!-- ---------- PERFIL ---------- -->
@@ -1068,6 +1108,17 @@ function openSoon(title, desc){
   $('#s-detail').classList.add('on');
   $all('.tab').forEach(function(t){ t.classList.remove('on'); });
   window.scrollTo(0,0);
+}
+function openReconstrucao(){
+  prev='home';
+  $all('.screen').forEach(function(s){ s.classList.remove('on'); });
+  $('#s-reconstrucao').classList.add('on');
+  $all('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab==='home'); });
+  window.scrollTo(0,0);
+}
+function acessarReconstrucao(){
+  // TODO: apontar para o checkout da Payt quando o usuário enviar o link
+  openSoon('Reconstrução da Confiança','Programa de reconstrução da confiança pós-reconciliação. Em breve nesta área.');
 }
 
 /* ============ BÔNUS ============ */
