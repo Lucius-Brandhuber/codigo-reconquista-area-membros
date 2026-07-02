@@ -662,6 +662,8 @@
     <section class="screen" id="s-reconstrucao">
       <button class="detail-back" onclick="go('home')">← Voltar ao início</button>
 
+      <!-- LOCKED: página de vendas -->
+      <div id="reconstrucao-locked">
       <div class="emer-hero" style="background:linear-gradient(135deg,#f97316,#ec3a8b)">
         <div class="emer-ico">❤️‍🩹</div>
         <h2>Reconstrução da Confiança</h2>
@@ -696,6 +698,25 @@
       </div>
 
       <button class="btn-grad" id="reconstrucao-cta" style="width:100%;padding:16px;font-size:15px;border-radius:14px;box-sizing:border-box" onclick="acessarReconstrucao()">Acessar Reconstrução da Confiança →</button>
+      </div>
+
+      <!-- UNLOCKED: conteúdo real -->
+      <div id="reconstrucao-unlocked" style="display:none">
+        <div class="emer-hero" style="background:linear-gradient(135deg,#f97316,#ec3a8b)">
+          <div class="emer-ico">❤️‍🩹</div>
+          <h2>Reconstrução da Confiança</h2>
+          <p>✅ Desbloqueado</p>
+        </div>
+
+        <div style="background:#fff;border-radius:16px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+          <p style="font-size:16px;font-weight:800;color:#1a1a2e;line-height:1.45;margin:0 0 12px">Agora você tem o mapa completo para manter o amor de volta. 🧡</p>
+          <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px">Dentro deste material está o método completo para <strong>curar o relacionamento por dentro</strong> depois da reconciliação: como parar os pensamentos intrusivos, lidar com o ciúme sem gerar conflito, ter as conversas difíceis sem explodir e reconstruir a confiança passo a passo.</p>
+          <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px"><strong>Como usar:</strong> leia com calma, no seu ritmo, e volte sempre que uma insegurança ou uma briga aparecer. Cada capítulo é uma ferramenta prática pra aplicar no dia a dia.</p>
+          <p style="font-size:14px;color:#444;line-height:1.6;margin:0">Salve o PDF no seu celular para ter o método sempre à mão. 💗</p>
+        </div>
+
+        <a href="reconstrucao.pdf" download="Reconstrucao da Confianca.pdf" class="btn-grad" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;font-size:15px;border-radius:14px;text-align:center;text-decoration:none;box-sizing:border-box">📥 Baixar Reconstrução da Confiança (PDF)</a>
+      </div>
     </section>
 
     <!-- ---------- PERFIL ---------- -->
@@ -1016,6 +1037,7 @@ function normData(d){
   if(!Array.isArray(d.diario)) d.diario=[];
   if(!d.aulas || typeof d.aulas!=='object') d.aulas={};   // {'intro|0.1':true,...}
   d.biblio = d.biblio === true;   // Biblioteca das Respostas desbloqueada (fica na conta, cross-device)
+  d.reconstrucao = d.reconstrucao === true;   // Reconstrução da Confiança desbloqueada
   return d;
 }
 function startSession(s, dados){
@@ -1035,19 +1057,21 @@ function bootApp(name){
   $('#gate').classList.add('hidden');
   $('#app').classList.remove('hidden');
   $('#u-name').textContent = String(name||'você').split(' ')[0];
-  ensureBiblioSynced();
+  ensureUnlockSynced('biblio','crm_biblio');
+  ensureUnlockSynced('reconstrucao','crm_reconstrucao');
   renderDiario();
   routeFromHash();
 }
-/* Se a Biblioteca foi desbloqueada por link neste aparelho (localStorage) mas
-   a conta no servidor ainda não sabe, grava na conta para valer em qualquer
-   aparelho. E se a conta já tem, garante o localStorage local. */
-function ensureBiblioSynced(){
+/* Se um extra (Biblioteca / Reconstrução) foi desbloqueado por link neste
+   aparelho (localStorage) mas a conta no servidor ainda não sabe, grava na
+   conta para valer em qualquer aparelho. E se a conta já tem, semeia o
+   localStorage local. */
+function ensureUnlockSynced(flag, lsKey){
   if(!session || !session.email) return;
   var mail = session.email.toLowerCase(), localOn=false;
-  try{ var b=JSON.parse(localStorage.getItem('crm_biblio')||'null'); localOn=!!(b && (b.email||'').toLowerCase()===mail); }catch(e){}
-  if(localOn && USERDATA.biblio!==true){ USERDATA.biblio=true; persist(); }
-  else if(USERDATA.biblio===true && !localOn){ localStorage.setItem('crm_biblio', JSON.stringify({email:mail, key:'server'})); }
+  try{ var b=JSON.parse(localStorage.getItem(lsKey)||'null'); localOn=!!(b && (b.email||'').toLowerCase()===mail); }catch(e){}
+  if(localOn && USERDATA[flag]!==true){ USERDATA[flag]=true; persist(); }
+  else if(USERDATA[flag]===true && !localOn){ localStorage.setItem(lsKey, JSON.stringify({email:mail, key:'server'})); }
 }
 function routeFromHash(){
   var h = (location.hash||'').replace('#','');
@@ -1111,10 +1135,25 @@ function openSoon(title, desc){
 }
 function openReconstrucao(){
   prev='home';
+  updateReconstrucaoState();
   $all('.screen').forEach(function(s){ s.classList.remove('on'); });
   $('#s-reconstrucao').classList.add('on');
   $all('.tab').forEach(function(t){ t.classList.toggle('on', t.dataset.tab==='home'); });
   window.scrollTo(0,0);
+}
+function updateReconstrucaoState(){
+  var open = reconstrucaoDesbloqueada();
+  $('#reconstrucao-locked').style.display = open ? 'none' : 'block';
+  $('#reconstrucao-unlocked').style.display = open ? 'block' : 'none';
+}
+function reconstrucaoDesbloqueada(){
+  if(USERDATA && USERDATA.reconstrucao === true) return true;   // desbloqueada na conta (cross-device)
+  try{
+    var b = JSON.parse(localStorage.getItem('crm_reconstrucao')||'null');
+    if(!b) return false;
+    if(session && session.email && b.email !== session.email.toLowerCase()) return false;
+    return true;
+  }catch(e){ return false; }
 }
 function acessarReconstrucao(){
   window.open('https://checkout.payt.com.br/c/RK9QP8','_blank','noopener');
@@ -1721,16 +1760,21 @@ function esc(s){ return String(s).replace(/[&<>"']/g,function(c){ return {'&':'&
       bootApp(s.nome);
     }
   }
-  // unlock extras via URL (?unlock=biblioteca&email=x&key=y)
+  // unlock extras via URL (?unlock=biblioteca|reconstrucao&email=x&key=y)
   var params = new URLSearchParams(location.search);
-  if (params.get('unlock') === 'biblioteca' && params.get('key')){
+  var unlockMap = {
+    biblioteca:   { ls:'crm_biblio',       flag:'biblio',       refresh:updateBiblioState },
+    reconstrucao: { ls:'crm_reconstrucao', flag:'reconstrucao', refresh:updateReconstrucaoState }
+  };
+  var prod = unlockMap[params.get('unlock')];
+  if (prod && params.get('key')){
     var unlockEmail = (params.get('email')||'').toLowerCase();
     var unlockKey = params.get('key');
-    localStorage.setItem('crm_biblio', JSON.stringify({email:unlockEmail, key:unlockKey}));
+    localStorage.setItem(prod.ls, JSON.stringify({email:unlockEmail, key:unlockKey}));
     history.replaceState(null, '', location.pathname);
     // se já está logada com esse e-mail, grava na conta agora (vale em qualquer aparelho)
-    if(session && session.email && session.email.toLowerCase()===unlockEmail && USERDATA.biblio!==true){
-      USERDATA.biblio=true; persist(); updateBiblioState();
+    if(session && session.email && session.email.toLowerCase()===unlockEmail && USERDATA[prod.flag]!==true){
+      USERDATA[prod.flag]=true; persist(); prod.refresh();
     }
   }
 })();
