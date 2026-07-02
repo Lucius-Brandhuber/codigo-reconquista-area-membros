@@ -578,15 +578,17 @@
           <div style="background:linear-gradient(135deg,#a855f7,#7c3aed);border-radius:18px;padding:28px 22px;margin-bottom:18px">
             <div style="font-size:32px;margin-bottom:6px">📚</div>
             <h3 style="color:#fff;font-size:19px;font-weight:800;margin:0 0 4px">Biblioteca das Respostas</h3>
-            <p style="color:rgba(255,255,255,.85);font-size:13px;margin:0">✅ Desbloqueada — escolha sua situação abaixo</p>
+            <p style="color:rgba(255,255,255,.85);font-size:13px;margin:0">✅ Desbloqueada</p>
           </div>
-          <p class="tool-intro">Selecione sua situação e objetivo para receber sugestões estratégicas.</p>
-          <div class="sec-lbl">Situação atual</div>
-          <div class="opt-grid" id="sit-grid"></div>
-          <div class="sec-lbl">Objetivo</div>
-          <div class="opt-grid" id="obj-grid"></div>
-          <button class="gen-btn" id="gen-btn" onclick="gerarMsg()">✨ Gerar sugestões</button>
-          <div class="gen-out" id="gen-out"></div>
+
+          <div style="background:#fff;border-radius:16px;padding:22px;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.06)">
+            <p style="font-size:16px;font-weight:700;color:#1a1a2e;line-height:1.5;margin:0 0 12px">Você agora tem acesso à arma mais poderosa da reconquista.</p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px">Dentro deste PDF estão <strong>mais de 40 respostas prontas</strong> para as situações mais difíceis que você vai enfrentar — desde o primeiro contato depois do silêncio até a mensagem certa quando ele diz que "não sabe o que quer".</p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0 0 14px"><strong>Como usar:</strong> ache sua situação no índice, copie a mensagem e adapte com o nome dele. Simples assim.</p>
+            <p style="font-size:14px;color:#444;line-height:1.6;margin:0">Salve o PDF no seu celular para ter acesso rápido sempre que precisar. Na hora H, você não pode ficar sem resposta. 💜</p>
+          </div>
+
+          <a href="biblioteca.pdf" download="Mensagens Para Reconquista Rapida.pdf" class="btn-grad" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;font-size:15px;border-radius:14px;text-align:center;text-decoration:none;box-sizing:border-box">📥 Baixar Biblioteca das Respostas (PDF)</a>
         </div>
       </div>
 
@@ -1204,7 +1206,6 @@ function updateBiblioState(){
   var open = biblioDesbloqueada();
   $('#biblio-locked').style.display = open ? 'none' : 'block';
   $('#biblio-unlocked').style.display = open ? 'block' : 'none';
-  if(open) renderMsgOpts();
 }
 
 /* ----- mensagens ----- */
